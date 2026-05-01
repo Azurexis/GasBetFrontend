@@ -4,7 +4,7 @@ import { authFetch } from "../api/authFetch";
 import "./BetPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { getEventLabel, getFuelLabel, getDirectionLabel, formatDate } from "../utils/index";
+import { getEventLabel, getFuelLabel, getDirectionLabel, formatPrice, formatDate } from "../utils/index";
 
 function BetPage() {
     const { id } = useParams();
@@ -135,7 +135,7 @@ function BetPage() {
                         <div className="place-bet-info-box">
                             <h3>Preis am {formatDate(eventItem.startsAt)}</h3>
                             <div className="title">
-                                {eventItem.priceAtStart.toFixed(3)} €
+                                {formatPrice(eventItem.priceAtStart)}
                             </div>
                         </div>
 

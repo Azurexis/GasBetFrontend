@@ -9,6 +9,8 @@ import {
     ResponsiveContainer
 } from "recharts";
 
+import "./PriceHistoryChart.css";
+
 type PriceHistoryPoint = {
     recordedAt: string;
     dieselPrice: number | null;
@@ -121,7 +123,7 @@ function PriceHistoryChart() {
     const lastIndex = data.length - 1;
 
     return (
-        <div style={{ width: "100%", height: 320, marginBottom: "2rem" }}>
+        <div className="price-history-chart">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                     data={data}

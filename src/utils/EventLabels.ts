@@ -57,7 +57,10 @@ export function formatPrice(price?: number | null): string {
         return "-";
     }
 
-    return `${price.toFixed(3)} €`;
+    return `${price.toLocaleString("de-DE", {
+        minimumFractionDigits: 3,
+        maximumFractionDigits: 3
+    })} €`;
 }
 
 export function getStatusLabel(status: string): string {

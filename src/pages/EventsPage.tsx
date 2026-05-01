@@ -4,7 +4,7 @@ import PriceHistoryChart from "../components/PriceHistoryChart";
 import "./EventsPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { getStatusLabel } from "../utils/index";
+import { formatPrice, getStatusLabel } from "../utils/index";
 
 function EventsPage() {
     const navigate = useNavigate();
@@ -53,7 +53,7 @@ function EventsPage() {
             return "-";
         }
 
-        return `aktuell ${eventItem.priceAtStart.toFixed(3)} €`;
+        return `aktuell ${formatPrice(eventItem.priceAtStart)} €`;
     }
 
     function getPredictionCountLabel(count: number): string {

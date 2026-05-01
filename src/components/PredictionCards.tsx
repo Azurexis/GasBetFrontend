@@ -49,20 +49,6 @@ export function PredictionCards({ items }: PredictionCardsProps) {
                                 {formatPrice(prediction.eventPriceAtStart)}
                             </div>
                         </div>
-
-                        <div className="mobile-card-prediction-item">
-                            <h3>Preis bei Auflösung</h3>
-                            <div className="mobile-card-prediction-value">
-                                {formatPrice(prediction.eventPriceAtResolved)}
-                            </div>
-                        </div>
-
-                        <div className="mobile-card-prediction-item">
-                            <h3>Wird aufgelöst am</h3>
-                            <div className="mobile-card-prediction-value">
-                                {formatDate(prediction.eventToBeResolvedAt)}
-                            </div>
-                        </div>
                     </div>
                 </article>
             ))}
