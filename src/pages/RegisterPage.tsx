@@ -75,6 +75,9 @@ function RegisterPage() {
                                 <label className="form-label" htmlFor="userName">
                                     Benutzername
                                 </label>
+                                <p className="sub-title">
+                                    Dein Benutzername ist für andere Nutzer sichtbar. Bitte verwende daher keine sensiblen oder persönlichen Informationen.
+                                </p>
                                 <input
                                     id="userName"
                                     className="form-input"
