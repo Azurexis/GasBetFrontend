@@ -73,6 +73,7 @@ function BetPage() {
                 throw new Error(errorText || "Failed to place bet.");
             }
 
+            window.dispatchEvent(new Event("statsUpdated"));
             navigate("/my-predictions");
         } catch (error) {
             if (error instanceof Error) {

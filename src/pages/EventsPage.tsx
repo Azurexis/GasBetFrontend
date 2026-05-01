@@ -7,13 +7,11 @@ import type { EventDTO } from "../types/EventDTO";
 import { getStatusLabel } from "../utils/index";
 
 function EventsPage() {
-    //Variables
     const navigate = useNavigate();
 
     const [events, setEvents] = useState<EventDTO[]>([]);
     const [errorMessage, setErrorMessage] = useState("");
 
-    //Use effect
     useEffect(() => {
         async function loadEvents() {
             try {
@@ -40,7 +38,6 @@ function EventsPage() {
         loadEvents();
     }, []);
 
-    //Functions
     function handleBet(eventId: number) {
         navigate(`/events/${eventId}/bet`);
     }
@@ -57,6 +54,10 @@ function EventsPage() {
         }
 
         return `aktuell ${eventItem.priceAtStart.toFixed(3)} €`;
+    }
+
+    function getPredictionCountLabel(count: number): string {
+        return count === 1 ? "1 Tipp" : `${count} Tipps`;
     }
 
     function renderBetCell(type: string) {
@@ -81,11 +82,7 @@ function EventsPage() {
                 </button>
 
                 <div className="sub-text">
-                    {getPredictionCountLabel(eventItem.predictionCount)}
-                </div>
-
-                <div className="sub-text">
-                    {eventItem.totalPointsStaked} Punkte gesamt
+                    {getPredictionCountLabel(eventItem.predictionCount)}, {eventItem.totalPointsStaked} Punkte gesamt
                 </div>
             </div>
         );
@@ -131,16 +128,42 @@ function EventsPage() {
         return `Tippschluss: heute ${lockedAtText}`;
     }
 
-    function getPredictionCountLabel(count: number): string {
-        return count === 1 ? "1 Tipp" : `${count} Tipps`;
+    function renderMobileBetOption(label: string, type: string) {
+        return (
+            <div className="mobile-bet-option">
+                <div className="mobile-bet-option-info">
+                    <div className="title">{label}</div>
+                    <div className="sub-title">{formatRowHint(type)}</div>
+                    <div className="sub-title">{formatLockHint(type)}</div>
+                </div>
+
+                <div className="mobile-bet-option-action">
+                    {renderBetCell(type)}
+                </div>
+            </div>
+        );
     }
 
-    //Handle loading and error
+    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string) {
+        return (
+            <section className="mobile-card" key={fuelName}>
+                <div className="mobile-card-header">
+                    <h2 className="mobile-card-title">{fuelName}</h2>
+                    <div className="mobile-fuel-card-price">{formatPriceForHeader(currentPriceType)}</div>
+                </div>
+
+                <div className="mobile-card-body">
+                    {renderMobileBetOption("📈 Preis ist morgen höher", riseType)}
+                    {renderMobileBetOption("📉 Preis ist morgen niedriger", fallType)}
+                </div>
+            </section>
+        );
+    }
+
     if (errorMessage) {
         return <div className="message-box error">Fehler: {errorMessage}</div>;
     }
 
-    //Return
     return (
         <div className="page">
             <div className="page-container">
@@ -149,7 +172,7 @@ function EventsPage() {
                 <section className="card">
                     <section className="card">
                         <div className="station-card-row">
-                            <div className="station-card-icon">⛽</div>
+                            <div className="station-card-icon">🟦⛽</div>
                             <div>
                                 <div className="station-card-label">Tankstelle</div>
                                 <h2 className="station-card-name">Aral</h2>
@@ -168,65 +191,98 @@ function EventsPage() {
 
                     <h2 className="section-title">Verfügbare Ereignisse</h2>
 
-                    <table className="events-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>
-                                    <div className="fuel-header">
-                                        <div>Diesel</div>
-                                        <div className="fuel-header-price sub-title">{formatPriceForHeader("DieselWillRiseNext24h")}</div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div className="fuel-header">
-                                        <div>E10</div>
-                                        <div className="fuel-header-price sub-title">{formatPriceForHeader("E10WillRiseNext24h")}</div>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div className="fuel-header">
-                                        <div>E5</div>
-                                        <div className="fuel-header-price sub-title">{formatPriceForHeader("E5WillRiseNext24h")}</div>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>
-                                    <div className="title">
-                                        <div>📈 Preis ist morgen höher</div>
-                                        <div className="sub-title">
-                                            {formatRowHint("DieselWillRiseNext24h")}   
+                    {/* Desktop table */}
+                    <div className="desktop-view">
+                        <table className="events-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>
+                                        <div className="fuel-header">
+                                            <div>Diesel</div>
+                                            <div className="fuel-header-price sub-title">
+                                                {formatPriceForHeader("DieselWillRiseNext24h")}
+                                            </div>
                                         </div>
-                                        <div className="sub-title">
-                                            {formatLockHint("DieselWillRiseNext24h")}
+                                    </th>
+                                    <th>
+                                        <div className="fuel-header">
+                                            <div>E10</div>
+                                            <div className="fuel-header-price sub-title">
+                                                {formatPriceForHeader("E10WillRiseNext24h")}
+                                            </div>
                                         </div>
-                                    </div>
-                                </th>
-                                <td>{renderBetCell("DieselWillRiseNext24h")}</td>
-                                <td>{renderBetCell("E10WillRiseNext24h")}</td>
-                                <td>{renderBetCell("E5WillRiseNext24h")}</td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    <div className="title">
-                                        <div>📉 Preis ist morgen niedriger</div>
-                                        <div className="sub-title">
-                                            {formatRowHint("DieselWillFallNext24h")}
+                                    </th>
+                                    <th>
+                                        <div className="fuel-header">
+                                            <div>E5</div>
+                                            <div className="fuel-header-price sub-title">
+                                                {formatPriceForHeader("E5WillRiseNext24h")}
+                                            </div>
                                         </div>
-                                        <div className="sub-title">
-                                            {formatLockHint("DieselWillFallNext24h")}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>
+                                        <div className="title">
+                                            <div>📈 Preis ist morgen höher</div>
+                                            <div className="sub-title">
+                                                {formatRowHint("DieselWillRiseNext24h")}
+                                            </div>
+                                            <div className="sub-title">
+                                                {formatLockHint("DieselWillRiseNext24h")}
+                                            </div>
                                         </div>
-                                    </div>
-                                </th>
-                                <td>{renderBetCell("DieselWillFallNext24h")}</td>
-                                <td>{renderBetCell("E10WillFallNext24h")}</td>
-                                <td>{renderBetCell("E5WillFallNext24h")}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                    </th>
+                                    <td>{renderBetCell("DieselWillRiseNext24h")}</td>
+                                    <td>{renderBetCell("E10WillRiseNext24h")}</td>
+                                    <td>{renderBetCell("E5WillRiseNext24h")}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <div className="title">
+                                            <div>📉 Preis ist morgen niedriger</div>
+                                            <div className="sub-title">
+                                                {formatRowHint("DieselWillFallNext24h")}
+                                            </div>
+                                            <div className="sub-title">
+                                                {formatLockHint("DieselWillFallNext24h")}
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td>{renderBetCell("DieselWillFallNext24h")}</td>
+                                    <td>{renderBetCell("E10WillFallNext24h")}</td>
+                                    <td>{renderBetCell("E5WillFallNext24h")}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile cards */}
+                    <div className="mobile-view">
+                        {renderMobileFuelCard(
+                            "Diesel",
+                            "DieselWillRiseNext24h",
+                            "DieselWillRiseNext24h",
+                            "DieselWillFallNext24h"
+                        )}
+
+                        {renderMobileFuelCard(
+                            "E10",
+                            "E10WillRiseNext24h",
+                            "E10WillRiseNext24h",
+                            "E10WillFallNext24h"
+                        )}
+
+                        {renderMobileFuelCard(
+                            "E5",
+                            "E5WillRiseNext24h",
+                            "E5WillRiseNext24h",
+                            "E5WillFallNext24h"
+                        )}
+                    </div>
                 </section>
             </div>
         </div>

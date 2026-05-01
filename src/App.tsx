@@ -8,6 +8,7 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import AllPredictionsPage from "./pages/AllPredictionsPage";
 import MyPredictionsPage from "./pages/MyPredictionsPage";
 import BetPage from "./pages/BetPage";
+import Footer from "./components/Footer";
 
 function App() {
     return (
@@ -24,6 +25,8 @@ function App() {
                 <Route path="/my-stats" element={<MyStatsPage />} />
                 <Route path="/events/:id/bet" element={<BetPage />} />
             </Routes>
+
+            <Footer />
         </BrowserRouter>
     );
 }

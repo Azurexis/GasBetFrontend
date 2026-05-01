@@ -6,7 +6,7 @@
 .station-card-label {
     font-size: 0.82rem;
     font-weight: 700;
-    color: #6b7280;
+    color: #6b7282;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 0.4rem;
@@ -32,10 +32,10 @@
 }
 
 .station-card-icon {
-    width: 48px;
-    height: 48px;
+    width: 96px;
+    height: 72px;
     border-radius: 12px;
-    background: #eff6ff;
+    background: #f3f4f6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -140,3 +140,39 @@
         color: #475569;
         cursor: not-allowed;
     }
+
+/* =====================================
+   Events Page - Mobile Cards
+===================================== */
+
+.mobile-fuel-card-price {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.mobile-bet-option {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+    .mobile-bet-option:first-child {
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .mobile-bet-option-action .bet-button {
+        width: 100%;
+        max-width: 220px;
+    }
+
+@media (max-width: 768px) {
+    .price-chart-box {
+        width: 100%;
+        overflow: hidden;
+    }
+}
