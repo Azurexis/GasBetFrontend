@@ -434,12 +434,20 @@ h3 {
     display: block;
 }
 
+.desktop-view-table-cell {
+    display: table-cell;
+}
+
 .mobile-view {
     display: none;
 }
 
 @media (max-width: 768px) {
     .desktop-view {
+        display: none;
+    }
+
+    .desktop-view-table-cell {
         display: none;
     }
 

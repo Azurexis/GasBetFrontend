@@ -59,8 +59,8 @@ function LeaderboardPage() {
                                     <th>Rang</th>
                                     <th>Spieler</th>
                                     <th>Punkte</th>
-                                    <th>Richtig</th>
-                                    <th>Falsch</th>
+                                    <th className="desktop-view-table-cell">Richtig</th>
+                                    <th className="desktop-view-table-cell">Falsch</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,8 +73,8 @@ function LeaderboardPage() {
                                         </td>
                                         <td className="title">{entry.userName}</td>
                                         <td className="points">{entry.totalPoints}</td>
-                                        <td>{entry.correctPredictions}</td>
-                                        <td>{entry.wrongPredictions}</td>
+                                        <td className="desktop-view-table-cell">{entry.correctPredictions}</td>
+                                        <td className="desktop-view-table-cell">{entry.wrongPredictions}</td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -53,6 +53,13 @@
     max-width: 900px;
 }
 
+    .price-chart-box:focus,
+    .price-chart-box:focus-visible,
+    .price-chart-box *:focus,
+    .price-chart-box *:focus-visible {
+        outline: none;
+    }
+
 .events-table {
     width: 100%;
     border-collapse: collapse;

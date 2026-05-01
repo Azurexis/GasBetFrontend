@@ -23,6 +23,39 @@ type ChartPoint = {
     e10Price: number | null;
 };
 
+type EndLabelProps = {
+    x?: number | string;
+    y?: number | string;
+    index?: number;
+    value?: unknown;
+    label: string;
+    lastIndex: number;
+    yOffset?: number;
+};
+
+function EndLabel({ x, y, index, value, label, lastIndex, yOffset = 0 }: EndLabelProps) {
+    if (index !== lastIndex || value === null || value === undefined || x === undefined || y === undefined) {
+        return null;
+    }
+
+    const xPos = Number(x);
+    const yPos = Number(y);
+
+    if (Number.isNaN(xPos) || Number.isNaN(yPos)) {
+        return null;
+    }
+
+    return (
+        <text
+            x={xPos + 10}
+            y={yPos + 4 + yOffset}
+            fontSize={12}
+        >
+            {label}
+        </text>
+    );
+}
+
 function PriceHistoryChart() {
     const [data, setData] = useState<ChartPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -85,17 +118,67 @@ function PriceHistoryChart() {
         return <p>No price history found.</p>;
     }
 
+    const lastIndex = data.length - 1;
+
     return (
         <div style={{ width: "100%", height: 320, marginBottom: "2rem" }}>
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <LineChart
+                    data={data}
+                    margin={{ top: 10, right: 70, bottom: 10, left: 0 }}
+                >
                     <CartesianGrid strokeDasharray="2 2" />
                     <XAxis dataKey="time" />
                     <YAxis domain={["auto", "auto"]} padding={{ top: 20, bottom: 20 }} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="dieselPrice" name="Diesel" dot={false} strokeWidth={3} />
-                    <Line type="monotone" dataKey="e5Price" name="E5" dot={false} strokeWidth={3} />
-                    <Line type="monotone" dataKey="e10Price" name="E10" dot={false} strokeWidth={3} />
+
+                    <Line
+                        type="monotone"
+                        dataKey="dieselPrice"
+                        name="Diesel"
+                        dot={false}
+                        strokeWidth={3}
+                        label={(props) => (
+                            <EndLabel
+                                {...props}
+                                label="Diesel"
+                                lastIndex={lastIndex}
+                                yOffset={-12}
+                            />
+                        )}
+                    />
+
+                    <Line
+                        type="monotone"
+                        dataKey="e5Price"
+                        name="E5"
+                        dot={false}
+                        strokeWidth={3}
+                        label={(props) => (
+                            <EndLabel
+                                {...props}
+                                label="E5"
+                                lastIndex={lastIndex}
+                                yOffset={0}
+                            />
+                        )}
+                    />
+
+                    <Line
+                        type="monotone"
+                        dataKey="e10Price"
+                        name="E10"
+                        dot={false}
+                        strokeWidth={3}
+                        label={(props) => (
+                            <EndLabel
+                                {...props}
+                                label="E10"
+                                lastIndex={lastIndex}
+                                yOffset={12}
+                            />
+                        )}
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </div>
