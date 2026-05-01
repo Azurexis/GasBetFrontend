@@ -60,7 +60,7 @@ function EventsPage() {
             return "-";
         }
 
-        return `aktuell ${formatPrice(eventItem.priceAtStart)} €`;
+        return `aktuell ${formatPrice(eventItem.priceAtStart)}`;
     }
 
     function getPredictionCountLabel(count: number): string {
