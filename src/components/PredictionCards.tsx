@@ -1,11 +1,5 @@
 import type { PredictionDTO } from "../types/PredictionDTO";
-import {
-    getEventLabel,
-    formatComparisonRange,
-    getOutcomeLabel,
-    formatPrice,
-    formatDate
-} from "../utils/index";
+import { getEventLabel, formatComparisonRange, getOutcomeLabel, formatPrice } from "../utils/index";
 
 type PredictionCardsProps = {
     items: PredictionDTO[];
