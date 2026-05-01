@@ -1,0 +1,173 @@
+.events-page {
+    min-height: 100vh;
+    background: #f6f7fb;
+    padding: 2rem 1rem 3rem;
+}
+
+.events-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.row-subtext {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+.events-title {
+    text-align: center;
+    font-size: 3rem;
+    margin: 0 0 2rem;
+    color: #1f2937;
+}
+
+.events-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    margin: 0 0 1rem;
+    font-size: 1.75rem;
+    color: #111827;
+}
+
+.events-page-message {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+    .events-page-message.error {
+        color: #b91c1c;
+        border-color: #fecaca;
+        background: #fef2f2;
+    }
+
+.events-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+    .events-table th,
+    .events-table td {
+        border: 1px solid #e5e7eb;
+        padding: 1rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .events-table thead th {
+        background: #f3f4f6;
+        color: #111827;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .events-table tbody th {
+        background: #f9fafb;
+        color: #374151;
+        font-weight: 600;
+        text-align: left;
+        min-width: 140px;
+    }
+
+.bet-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.bet-cell-empty {
+    color: #9ca3af;
+    font-size: 1.1rem;
+}
+
+.bet-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.bet-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.bet-status-open {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.bet-status-locked {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.bet-status-resolved {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.bet-button {
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+    .bet-button:hover:not(:disabled) {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .bet-button:disabled {
+        background: #cbd5e1;
+        color: #475569;
+        cursor: not-allowed;
+    }
+
+@media (max-width: 768px) {
+    .events-title {
+        font-size: 2.2rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .events-table th,
+    .events-table td {
+        padding: 0.75rem;
+    }
+
+    .bet-price {
+        font-size: 0.9rem;
+    }
+
+    .bet-button {
+        width: 100%;
+    }
+}

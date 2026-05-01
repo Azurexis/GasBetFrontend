@@ -1,0 +1,44 @@
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stats-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.stats-box-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stats-box-value-primary {
+    color: #2563eb;
+}
+
+.stats-box-value-success {
+    color: #16a34a;
+}
+
+.stats-box-value-failure {
+    color: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-user-name {
+        font-size: 1.6rem;
+    }
+
+    .stats-box-value {
+        font-size: 1.75rem;
+    }
+}
