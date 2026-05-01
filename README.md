@@ -189,3 +189,9 @@ Geplante Verbesserungen betreffen unter anderem zusätzliche Community-Funktione
 ## Lizenz
 
 Aktuell keine Lizenz definiert.
+
+---
+
+## Autor
+
+Erstellt von Nick Nespor.
