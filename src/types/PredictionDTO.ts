@@ -1,4 +1,4 @@
-import type { EventOutcome, EventStatus, EventTypeName } from "./eventDTO";
+import type { EventOutcome, EventStatus, EventTypeName } from "./EventDTO";
 
 export type PredictionDTO = {
     id: number;
