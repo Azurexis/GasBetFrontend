@@ -39,6 +39,13 @@ function EventsPage() {
     }, []);
 
     function handleBet(eventId: number) {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
         navigate(`/events/${eventId}/bet`);
     }
 
