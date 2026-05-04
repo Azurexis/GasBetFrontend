@@ -120,7 +120,7 @@ function EventsPage() {
         const eventItem = getEventByType(type);
 
         if (!eventItem) {
-            return null;
+            return "-";
         }
 
         const lockedAt = new Date(eventItem.lockedAt);

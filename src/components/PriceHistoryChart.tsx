@@ -171,8 +171,8 @@ function PriceHistoryChart() {
                                 minute: "2-digit"
                             })
                         }
-                        formatter={(value: number | null, name: string) => [
-                            value?.toFixed(3) ?? "-",
+                        formatter={(value, name) => [
+                            typeof value === "number" ? value.toFixed(3) : "-",
                             name
                         ]}
                     />
