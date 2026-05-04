@@ -4,7 +4,7 @@ import { authFetch } from "../api/authFetch";
 import "./BetPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { getEventLabel, getFuelLabel, getDirectionLabel, formatPrice, formatDate } from "../utils/index";
+import { getEventLabel, getFuelLabel, getDirectionLabel, formatPrice, formatQuota, formatDate } from "../utils/index";
 
 function BetPage() {
     const { id } = useParams();
@@ -140,15 +140,15 @@ function BetPage() {
                         </div>
 
                         <div className="place-bet-info-box">
-                            <h3>Wird aufgelöst am</h3>
+                            <h3>Quote</h3>
                             <div className="title">
-                                {formatDate(eventItem.toBeResolvedAt)}
+                                x{formatQuota(eventItem.quota)}
                             </div>
                         </div>
                     </div>
 
                     <span className="sub-text">
-                        Ist dein Tipp richtig, werden deine gesetzten Punkte verdoppelt. Ist dein Tipp falsch, bekommst du keine Punkte zurück.
+                        Ist dein Tipp richtig, werden deine gesetzten Punkte mit x{formatQuota(eventItem.quota)} multipliziert. Ist dein Tipp falsch, bekommst du keine Punkte zurück.
                     </span>
 
                     <form className="place-bet-form" onSubmit={handleSubmit}>

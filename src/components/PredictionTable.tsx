@@ -4,7 +4,7 @@ import {
     formatComparisonRange,
     getOutcomeLabel,
     formatPrice,
-    formatDate
+    formatQuota
 } from "../utils/index";
 
 type PredictionTableProps = {
@@ -34,7 +34,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                         <th>Punkte</th>
                         <th>Preis bei Abgabe</th>
                         <th>Preis bei Auflösung</th>
-                        <th>Wird aufgelöst am</th>
+                        <th>Quote</th>
                         <th>Ergebnis</th>
                     </tr>
                 </thead>
@@ -55,7 +55,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                             </td>
                             <td>{formatPrice(prediction.eventPriceAtStart)}</td>
                             <td>{formatPrice(prediction.eventPriceAtResolved)}</td>
-                            <td>{formatDate(prediction.eventToBeResolvedAt)}</td>
+                            <td>x{formatQuota(prediction.eventQuota)}</td>
                             <td>
                                 <span className={`prediction-outcome outcome-${(prediction.eventOutcome ?? "Unknown").toLowerCase()}`}>
                                     {getOutcomeLabel(prediction.eventOutcome)}

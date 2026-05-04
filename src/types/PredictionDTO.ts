@@ -14,6 +14,7 @@ export type PredictionDTO = {
 
     eventPriceAtStart?: number | null;
     eventPriceAtResolved?: number | null;
+    eventQuota?: number | null;
 
     pointsStaked: number;
     submittedAt: string;

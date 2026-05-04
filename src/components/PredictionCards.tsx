@@ -1,5 +1,5 @@
 import type { PredictionDTO } from "../types/PredictionDTO";
-import { getEventLabel, formatComparisonRange, getOutcomeLabel, formatPrice } from "../utils/index";
+import { getEventLabel, formatComparisonRange, getOutcomeLabel, formatQuota } from "../utils/index";
 
 type PredictionCardsProps = {
     items: PredictionDTO[];
@@ -38,9 +38,9 @@ export function PredictionCards({ items }: PredictionCardsProps) {
                         </div>
 
                         <div className="mobile-card-prediction-item">
-                            <h3>Preis bei Abgabe</h3>
+                            <h3>Quote</h3>
                             <div className="mobile-card-prediction-value">
-                                {formatPrice(prediction.eventPriceAtStart)}
+                                x{formatQuota(prediction.eventQuota)}
                             </div>
                         </div>
                     </div>

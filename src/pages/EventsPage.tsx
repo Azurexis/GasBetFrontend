@@ -4,7 +4,7 @@ import PriceHistoryChart from "../components/PriceHistoryChart";
 import "./EventsPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { formatPrice, getStatusLabel } from "../utils/index";
+import { formatPrice, formatQuota, getStatusLabel } from "../utils/index";
 
 function EventsPage() {
     const navigate = useNavigate();
@@ -63,10 +63,6 @@ function EventsPage() {
         return `aktuell ${formatPrice(eventItem.priceAtStart)}`;
     }
 
-    function getPredictionCountLabel(count: number): string {
-        return count === 1 ? "1 Tipp" : `${count} Tipps`;
-    }
-
     function renderBetCell(type: string) {
         const eventItem = getEventByType(type);
 
@@ -85,12 +81,14 @@ function EventsPage() {
                     onClick={() => handleBet(eventItem.id)}
                     disabled={eventItem.status !== "Open"}
                 >
-                    Punkte setzen
+                    x{formatQuota(eventItem.quota)}
                 </button>
 
-                <div className="sub-text">
-                    {getPredictionCountLabel(eventItem.predictionCount)}, {eventItem.totalPointsStaked} Punkte gesamt
-                </div>
+                {eventItem.badge === "Popular" && (
+                    <div className="bet-status bet-badge-hot">
+                        🔥 Hot
+                    </div>
+                )}
             </div>
         );
     }
@@ -122,7 +120,7 @@ function EventsPage() {
         const eventItem = getEventByType(type);
 
         if (!eventItem) {
-            return "Tippschluss unbekannt";
+            return null;
         }
 
         const lockedAt = new Date(eventItem.lockedAt);
@@ -151,7 +149,7 @@ function EventsPage() {
         );
     }
 
-    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string) {
+    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string, staySameType: string) {
         return (
             <section className="mobile-card" key={fuelName}>
                 <div className="mobile-card-header">
@@ -162,6 +160,7 @@ function EventsPage() {
                 <div className="mobile-card-body">
                     {renderMobileBetOption("📈 Preis ist morgen höher", riseType)}
                     {renderMobileBetOption("📉 Preis ist morgen niedriger", fallType)}
+                    {renderMobileBetOption("⚖️ Preis ist morgen gleich", staySameType)}
                 </div>
             </section>
         );
@@ -263,6 +262,22 @@ function EventsPage() {
                                     <td>{renderBetCell("E10WillFallNext24h")}</td>
                                     <td>{renderBetCell("E5WillFallNext24h")}</td>
                                 </tr>
+                                <tr>
+                                    <th>
+                                        <div className="title">
+                                            <div>⚖️ Preis ist morgen gleich</div>
+                                            <div className="sub-title">
+                                                {formatRowHint("DieselWillStaySameNext24h")}
+                                            </div>
+                                            <div className="sub-title">
+                                                {formatLockHint("DieselWillStaySameNext24h")}
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td>{renderBetCell("DieselWillStaySameNext24h")}</td>
+                                    <td>{renderBetCell("E10WillStaySameNext24h")}</td>
+                                    <td>{renderBetCell("E5WillStaySameNext24h")}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -273,21 +288,24 @@ function EventsPage() {
                             "Diesel",
                             "DieselWillRiseNext24h",
                             "DieselWillRiseNext24h",
-                            "DieselWillFallNext24h"
+                            "DieselWillFallNext24h",
+                            "DieselWillStaySameNext24h"
                         )}
 
                         {renderMobileFuelCard(
                             "E10",
                             "E10WillRiseNext24h",
                             "E10WillRiseNext24h",
-                            "E10WillFallNext24h"
+                            "E10WillFallNext24h",
+                            "E10WillStaySameNext24h"
                         )}
 
                         {renderMobileFuelCard(
                             "E5",
                             "E5WillRiseNext24h",
                             "E5WillRiseNext24h",
-                            "E5WillFallNext24h"
+                            "E5WillFallNext24h",
+                            "E5WillStaySameNext24h"
                         )}
                     </div>
                 </section>

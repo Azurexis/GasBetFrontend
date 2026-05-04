@@ -4,14 +4,23 @@ export function getEventLabel(eventType?: string): string {
             return "📈 Dieselpreis ist morgen höher";
         case "DieselWillFallNext24h":
             return "📉 Dieselpreis ist morgen niedriger";
+        case "DieselWillStaySameNext24h":
+            return "⚖️ Dieselpreis ist morgen gleich";
+
         case "E10WillRiseNext24h":
             return "📈 E10-Preis ist morgen höher";
         case "E10WillFallNext24h":
             return "📉 E10-Preis ist morgen niedriger";
+        case "E10WillStaySameNext24h":
+            return "⚖️ E10-Preis ist morgen gleich";
+
         case "E5WillRiseNext24h":
             return "📈 E5-Preis ist morgen höher";
         case "E5WillFallNext24h":
             return "📉 E5-Preis ist morgen niedriger";
+        case "E5WillStaySameNext24h":
+            return "⚖️ E5-Preis ist morgen gleich";
+
         default:
             return "Unbekanntes Ereignis";
     }
@@ -49,6 +58,7 @@ export function getFuelLabel(type: string): string {
 export function getDirectionLabel(type: string): string {
     if (type.includes("WillRise")) return "höher";
     if (type.includes("WillFall")) return "niedriger";
+    if (type.includes("WillStaySame")) return "gleich";
     return "verändert";
 }
 
@@ -61,6 +71,14 @@ export function formatPrice(price?: number | null): string {
         minimumFractionDigits: 3,
         maximumFractionDigits: 3
     })} €`;
+}
+
+export function formatQuota(price?: number | null): string {
+    if (price === null || price === undefined) {
+        return "-";
+    }
+
+    return price.toFixed(2);
 }
 
 export function getStatusLabel(status: string): string {

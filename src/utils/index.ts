@@ -1,2 +1,2 @@
-export { getEventLabel, formatComparisonRange, getFuelLabel, getDirectionLabel, formatPrice, getStatusLabel, getOutcomeLabel } from "./EventLabels";
+export { getEventLabel, formatComparisonRange, getFuelLabel, getDirectionLabel, formatPrice, formatQuota, getStatusLabel, getOutcomeLabel } from "./EventLabels";
 export { formatDate } from "./DateFormatting";

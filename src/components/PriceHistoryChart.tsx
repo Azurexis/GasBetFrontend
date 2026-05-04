@@ -19,7 +19,7 @@ type PriceHistoryPoint = {
 };
 
 type ChartPoint = {
-    time: string;
+    time: number;
     dieselPrice: number | null;
     e5Price: number | null;
     e10Price: number | null;
@@ -58,6 +58,28 @@ function EndLabel({ x, y, index, value, label, lastIndex, yOffset = 0 }: EndLabe
     );
 }
 
+function formatTick(value: number): string {
+    const date = new Date(value);
+
+    const timeText = date.toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    const isMidnight = date.getHours() === 0 && date.getMinutes() === 0;
+
+    if (isMidnight) {
+        const dateText = date.toLocaleDateString("de-DE", {
+            day: "2-digit",
+            month: "2-digit"
+        });
+
+        return `${dateText} ${timeText}`;
+    }
+
+    return timeText;
+}
+
 function PriceHistoryChart() {
     const [data, setData] = useState<ChartPoint[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -84,10 +106,7 @@ function PriceHistoryChart() {
                 const rawData: PriceHistoryPoint[] = await response.json();
 
                 const mappedData = rawData.map((point) => ({
-                    time: new Date(point.recordedAt).toLocaleTimeString("de-DE", {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    }),
+                    time: new Date(point.recordedAt).getTime(),
                     dieselPrice: point.dieselPrice,
                     e5Price: point.e5Price,
                     e10Price: point.e10Price
@@ -129,13 +148,37 @@ function PriceHistoryChart() {
                     data={data}
                     margin={{ top: 10, right: 70, bottom: 10, left: 0 }}
                 >
-                    <CartesianGrid strokeDasharray="2 2" />
-                    <XAxis dataKey="time" />
+                    <CartesianGrid strokeDasharray="2 2" vertical={false} />
+
+                    <XAxis
+                        dataKey="time"
+                        type="number"
+                        scale="time"
+                        domain={["dataMin", "dataMax"]}
+                        minTickGap={35}
+                        tickFormatter={formatTick}
+                    />
+
                     <YAxis domain={["auto", "auto"]} padding={{ top: 20, bottom: 20 }} />
-                    <Tooltip />
+
+                    <Tooltip
+                        labelFormatter={(value) =>
+                            new Date(Number(value)).toLocaleString("de-DE", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            })
+                        }
+                        formatter={(value: number | null, name: string) => [
+                            value?.toFixed(3) ?? "-",
+                            name
+                        ]}
+                    />
 
                     <Line
-                        type="monotone"
+                        type="linear"
                         dataKey="dieselPrice"
                         name="Diesel"
                         dot={false}
@@ -151,7 +194,7 @@ function PriceHistoryChart() {
                     />
 
                     <Line
-                        type="monotone"
+                        type="linear"
                         dataKey="e5Price"
                         name="E5"
                         dot={false}
@@ -167,7 +210,7 @@ function PriceHistoryChart() {
                     />
 
                     <Line
-                        type="monotone"
+                        type="linear"
                         dataKey="e10Price"
                         name="E10"
                         dot={false}
