@@ -69,7 +69,7 @@ export function getEventDurationHours(type: string): number {
     return 24;
 }
 
-export function getTimeComparisonLabelNow(event: EventComparisonSource): string {
+export function getTimeComparisonLabelNow(event: EventComparisonSource | null | undefined): string {
     if (!event || !event.type) {
         return "Vergleich: -";
     }

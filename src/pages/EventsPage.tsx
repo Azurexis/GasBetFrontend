@@ -129,7 +129,7 @@ function EventsPage() {
             <div className="mobile-bet-option">
                 <div className="mobile-bet-option-info">
                     <div className="title">{label}</div>
-                    <div className="sub-title">{getTimeComparisonLabelNow(getEventByType(type))}</div>
+                    <div className="sub-title">{getTimeComparisonLabelNow(getEventByType(type) ?? null)}</div>
                     <div className="sub-title">{formatLockHint(type)}</div>
                 </div>
 
@@ -227,7 +227,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>📈 Preis ist morgen höher</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillRiseNext24h"))}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillRiseNext24h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillRiseNext24h")}
@@ -243,7 +243,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>📉 Preis ist morgen niedriger</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext24h"))}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext24h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillFallNext24h")}
@@ -259,7 +259,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>⚖️ Preis ist morgen gleich</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext24h"))}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext24h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillStaySameNext24h")}
@@ -275,7 +275,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>↘️ Preis fällt nächste Stunde</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext2h"))}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext2h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillFallNext2h")}
@@ -291,7 +291,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>➡️ Preis bleibt nächste Stunde gleich</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext2h"))}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext2h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillStaySameNext2h")}
