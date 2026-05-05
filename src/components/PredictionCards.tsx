@@ -1,5 +1,5 @@
 import type { PredictionDTO } from "../types/PredictionDTO";
-import { getEventLabel, formatComparisonRange, getOutcomeLabel, formatQuota } from "../utils/index";
+import { getEventLabel, getTimeComparisonLabelGeneral, getOutcomeLabel, formatQuota } from "../utils/index";
 
 type PredictionCardsProps = {
     items: PredictionDTO[];
@@ -18,10 +18,12 @@ export function PredictionCards({ items }: PredictionCardsProps) {
 
                     <div className="mobile-card-sub-header">
                         <div className="sub-title">
-                            {formatComparisonRange(
-                                prediction.eventStartsAt,
-                                prediction.eventToBeResolvedAt
-                            )}
+                            {getTimeComparisonLabelGeneral({
+                                type: prediction.eventType ?? "",
+                                startsAt: prediction.eventStartsAt,
+                                lockedAt: prediction.eventLockedAt,
+                                toBeResolvedAt: prediction.eventToBeResolvedAt
+                            })}
                         </div>
 
                         <span className={`prediction-outcome outcome-${(prediction.eventOutcome ?? "Unknown").toLowerCase()}`}>

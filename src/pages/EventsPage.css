@@ -148,6 +148,14 @@
         cursor: not-allowed;
     }
 
+.bet-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
 .bet-badge {
     display: inline-flex;
     align-items: center;
@@ -158,9 +166,19 @@
     font-weight: 700;
 }
 
+.bet-badge-popular {
+    background: #fce7f3;
+    color: #be185d;
+}
+
 .bet-badge-hot {
     background: #fee2e2;
     color: #b91c1c;
+}
+
+.bet-badge-cold {
+    background: #dbeafe;
+    color: #1d4ed8;
 }
 
 /* =====================================

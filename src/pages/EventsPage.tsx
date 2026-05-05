@@ -4,7 +4,7 @@ import PriceHistoryChart from "../components/PriceHistoryChart";
 import "./EventsPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { formatPrice, formatQuota, getStatusLabel } from "../utils/index";
+import { formatPrice, formatQuota, getStatusLabel, getTimeComparisonLabelNow } from "../utils/index";
 
 function EventsPage() {
     const navigate = useNavigate();
@@ -84,36 +84,27 @@ function EventsPage() {
                     x{formatQuota(eventItem.quota)}
                 </button>
 
-                {eventItem.badge === "Popular" && (
-                    <div className="bet-status bet-badge-hot">
-                        🔥 Hot
-                    </div>
-                )}
+                <div className="bet-badges">
+                    {eventItem.badges.includes("Popular") && (
+                        <div className="bet-status bet-badge-popular">
+                            ♥️ Beliebt
+                        </div>
+                    )}
+
+                    {eventItem.badges.includes("Hot") && (
+                        <div className="bet-status bet-badge-hot">
+                            🔥 Hot
+                        </div>
+                    )}
+
+                    {eventItem.badges.includes("Cold") && (
+                        <div className="bet-status bet-badge-cold">
+                            ❄️ Cold
+                        </div>
+                    )}
+                </div>
             </div>
         );
-    }
-
-    function formatRowHint(type: string): string {
-        const eventItem = getEventByType(type);
-
-        if (!eventItem) {
-            return "Vergleich mit der gleichen Uhrzeit morgen.";
-        }
-
-        const start = new Date(eventItem.startsAt);
-        const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-
-        const startText = start.toLocaleTimeString("de-DE", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-        const endText = end.toLocaleTimeString("de-DE", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-        return `Vergleich: heute ${startText} ↔ morgen ${endText}`;
     }
 
     function formatLockHint(type: string): string {
@@ -138,7 +129,7 @@ function EventsPage() {
             <div className="mobile-bet-option">
                 <div className="mobile-bet-option-info">
                     <div className="title">{label}</div>
-                    <div className="sub-title">{formatRowHint(type)}</div>
+                    <div className="sub-title">{getTimeComparisonLabelNow(getEventByType(type))}</div>
                     <div className="sub-title">{formatLockHint(type)}</div>
                 </div>
 
@@ -149,7 +140,7 @@ function EventsPage() {
         );
     }
 
-    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string, staySameType: string) {
+    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string, staySameType: string, fallShortType: string, staySameShortType: string) {
         return (
             <section className="mobile-card" key={fuelName}>
                 <div className="mobile-card-header">
@@ -161,6 +152,8 @@ function EventsPage() {
                     {renderMobileBetOption("📈 Preis ist morgen höher", riseType)}
                     {renderMobileBetOption("📉 Preis ist morgen niedriger", fallType)}
                     {renderMobileBetOption("⚖️ Preis ist morgen gleich", staySameType)}
+                    {renderMobileBetOption("↘️ Preis fällt nächste Stunde", fallShortType)}
+                    {renderMobileBetOption("➡️ Preis bleibt nächste Stunde gleich", staySameShortType)}
                 </div>
             </section>
         );
@@ -173,14 +166,13 @@ function EventsPage() {
     return (
         <div className="page">
             <div className="page-container">
-                <h1 className="title-card">Ereignisse</h1>
-
                 <section className="card">
+                    <h2 className="section-title">Ereignisse</h2>
                     <section className="card">
                         <div className="station-card-row">
                             <div className="station-card-icon">🟦⛽</div>
                             <div>
-                                <div className="station-card-label">Tankstelle</div>
+                                <div className="station-card-label">Referenztankstelle</div>
                                 <h2 className="station-card-name">Aral</h2>
                                 <div className="station-card-address">Erlanger Str. 98, 90765 Fürth</div>
                             </div>
@@ -235,7 +227,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>📈 Preis ist morgen höher</div>
                                             <div className="sub-title">
-                                                {formatRowHint("DieselWillRiseNext24h")}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillRiseNext24h"))}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillRiseNext24h")}
@@ -251,7 +243,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>📉 Preis ist morgen niedriger</div>
                                             <div className="sub-title">
-                                                {formatRowHint("DieselWillFallNext24h")}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext24h"))}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillFallNext24h")}
@@ -267,7 +259,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>⚖️ Preis ist morgen gleich</div>
                                             <div className="sub-title">
-                                                {formatRowHint("DieselWillStaySameNext24h")}
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext24h"))}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillStaySameNext24h")}
@@ -277,6 +269,38 @@ function EventsPage() {
                                     <td>{renderBetCell("DieselWillStaySameNext24h")}</td>
                                     <td>{renderBetCell("E10WillStaySameNext24h")}</td>
                                     <td>{renderBetCell("E5WillStaySameNext24h")}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <div className="title">
+                                            <div>↘️ Preis fällt nächste Stunde</div>
+                                            <div className="sub-title">
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext2h"))}
+                                            </div>
+                                            <div className="sub-title">
+                                                {formatLockHint("DieselWillFallNext2h")}
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td>{renderBetCell("DieselWillFallNext2h")}</td>
+                                    <td>{renderBetCell("E10WillFallNext2h")}</td>
+                                    <td>{renderBetCell("E5WillFallNext2h")}</td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <div className="title">
+                                            <div>➡️ Preis bleibt nächste Stunde gleich</div>
+                                            <div className="sub-title">
+                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext2h"))}
+                                            </div>
+                                            <div className="sub-title">
+                                                {formatLockHint("DieselWillStaySameNext2h")}
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td>{renderBetCell("DieselWillStaySameNext2h")}</td>
+                                    <td>{renderBetCell("E10WillStaySameNext2h")}</td>
+                                    <td>{renderBetCell("E5WillStaySameNext2h")}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -289,7 +313,9 @@ function EventsPage() {
                             "DieselWillRiseNext24h",
                             "DieselWillRiseNext24h",
                             "DieselWillFallNext24h",
-                            "DieselWillStaySameNext24h"
+                            "DieselWillStaySameNext24h",
+                            "DieselWillFallNext2h",
+                            "DieselWillStaySameNext2h"
                         )}
 
                         {renderMobileFuelCard(
@@ -297,7 +323,9 @@ function EventsPage() {
                             "E10WillRiseNext24h",
                             "E10WillRiseNext24h",
                             "E10WillFallNext24h",
-                            "E10WillStaySameNext24h"
+                            "E10WillStaySameNext24h",
+                            "E10WillFallNext2h",
+                            "E10WillStaySameNext2h"
                         )}
 
                         {renderMobileFuelCard(
@@ -305,7 +333,9 @@ function EventsPage() {
                             "E5WillRiseNext24h",
                             "E5WillRiseNext24h",
                             "E5WillFallNext24h",
-                            "E5WillStaySameNext24h"
+                            "E5WillStaySameNext24h",
+                            "E5WillFallNext2h",
+                            "E5WillStaySameNext2h"
                         )}
                     </div>
                 </section>

@@ -8,7 +8,7 @@
 }
 
 .navbar-container {
-    max-width: 1200px;
+    max-width: 1250px;
     margin: 0 auto;
     padding: 0.9rem 1rem;
 }
@@ -81,6 +81,20 @@
     font-weight: 700;
     font-size: 0.92rem;
     border: 1px solid #bfdbfe;
+    white-space: nowrap;
+}
+
+.navbar-multiplier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-weight: 700;
+    font-size: 0.92rem;
+    border: 1px solid #d89393;
     white-space: nowrap;
 }
 

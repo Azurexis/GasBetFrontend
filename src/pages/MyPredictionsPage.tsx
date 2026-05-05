@@ -55,16 +55,14 @@ function MyPredictionsPage() {
     return (
         <div className="page">
             <div className="page-container">
-                <h1 className="title-card">Meine Tipps</h1>
-
                 <section className="card">
-                    <h2 className="section-title">Aktive Tipps</h2>
+                    <h2 className="section-title">Meine aktive Tipps</h2>
                     <PredictionTable items={activePredictions} />
                     <PredictionCards items={activePredictions} />
                 </section>
 
                 <section className="card">
-                    <h2 className="section-title">Vergangene Tipps</h2>
+                    <h2 className="section-title">Meine vergangenen Tipps</h2>
                     <PredictionTable items={pastPredictions} />
                     <PredictionCards items={pastPredictions} />
                 </section>

@@ -1,11 +1,5 @@
 import type { PredictionDTO } from "../types/PredictionDTO";
-import {
-    getEventLabel,
-    formatComparisonRange,
-    getOutcomeLabel,
-    formatPrice,
-    formatQuota
-} from "../utils/index";
+import {getEventLabel, getTimeComparisonLabelGeneral, getOutcomeLabel, formatPrice, formatQuota } from "../utils/index";
 
 type PredictionTableProps = {
     items: PredictionDTO[];
@@ -44,10 +38,12 @@ export function PredictionTable({ items }: PredictionTableProps) {
                             <td className="title">
                                 <div>{getEventLabel(prediction.eventType)}</div>
                                 <div className="sub-title">
-                                    {formatComparisonRange(
-                                        prediction.eventStartsAt,
-                                        prediction.eventToBeResolvedAt
-                                    )}
+                                    {getTimeComparisonLabelGeneral({
+                                        type: prediction.eventType ?? "",
+                                        startsAt: prediction.eventStartsAt,
+                                        lockedAt: prediction.eventLockedAt,
+                                        toBeResolvedAt: prediction.eventToBeResolvedAt
+                                    })}
                                 </div>
                             </td>
                             <td className="points">

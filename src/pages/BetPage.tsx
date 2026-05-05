@@ -4,7 +4,7 @@ import { authFetch } from "../api/authFetch";
 import "./BetPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { getEventLabel, getFuelLabel, getDirectionLabel, formatPrice, formatQuota, formatDate } from "../utils/index";
+import { getEventLabel, getFuelLabel, getDirectionLabel, getEventDurationHours, formatPrice, formatQuota, formatDate } from "../utils/index";
 
 function BetPage() {
     const { id } = useParams();
@@ -90,14 +90,29 @@ function BetPage() {
         const fuel = getFuelLabel(eventItem.type);
         const direction = getDirectionLabel(eventItem.type);
 
+        const durationHours = getEventDurationHours(eventItem.type);
+
+        const comparisonStart =
+            durationHours === 24 ? eventItem.startsAt : eventItem.lockedAt;
+
         const resolvedAtText = formatDate(eventItem.toBeResolvedAt);
-        const startsAtText = formatDate(eventItem.startsAt);
+        const comparisonStartText = formatDate(comparisonStart);
+
+        if (durationHours === 24) {
+            return (
+                <>
+                    Du setzt darauf, dass der {fuel} bei der Tankstelle Aral (Erlanger Str. 98, Fürth) morgen, am{" "}
+                    <strong>{resolvedAtText}</strong> {direction} sein wird als heute, am{" "}
+                    <strong>{comparisonStartText}</strong>.
+                </>
+            );
+        }
 
         return (
             <>
-                Du setzt darauf, dass der {fuel} bei der Tankstelle Aral (Erlanger Str. 98, Fürth) morgen, am{" "}
-                <strong>{resolvedAtText}</strong> {direction} sein wird als heute, am{" "}
-                <strong>{startsAtText}</strong>.
+                Du setzt darauf, dass der {fuel} bei der Tankstelle Aral (Erlanger Str. 98, Fürth) um{" "}
+                <strong>{resolvedAtText}</strong> {direction} sein wird als zum Tippschluss um{" "}
+                <strong>{comparisonStartText}</strong>.
             </>
         );
     }
@@ -113,6 +128,14 @@ function BetPage() {
     if (!eventItem) {
         return <div className="message-box">Ereignis nicht gefunden.</div>;
     }
+
+    const durationHours = getEventDurationHours(eventItem.type);
+    const isShortEvent = durationHours !== 24;
+
+    const displayedPrice = eventItem.priceAtStart;
+    const displayedPriceTitle = isShortEvent
+        ? "Aktueller Preis"
+        : `Preis am ${formatDate(eventItem.startsAt)}`;
 
     return (
         <div className="page">
@@ -133,9 +156,9 @@ function BetPage() {
 
                     <div className="place-bet-info-grid">
                         <div className="place-bet-info-box">
-                            <h3>Preis am {formatDate(eventItem.startsAt)}</h3>
+                            <h3>{displayedPriceTitle}</h3>
                             <div className="title">
-                                {formatPrice(eventItem.priceAtStart)}
+                                {formatPrice(displayedPrice)}
                             </div>
                         </div>
 

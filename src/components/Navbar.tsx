@@ -4,12 +4,7 @@ import { authFetch } from "../api/authFetch";
 import logo from "../assets/logo.png";
 import "./Navbar.css";
 
-type UserStatsType = {
-    userName: string;
-    totalPoints: number;
-    correctPredictions: number;
-    wrongPredictions: number;
-};
+import type { UserStatsDTO } from "../types/UserStatsDTO";
 
 function Navbar() {
     const navigate = useNavigate();
@@ -17,7 +12,7 @@ function Navbar() {
     const token = localStorage.getItem("token");
     const isLoggedIn = !!token;
 
-    const [stats, setStats] = useState<UserStatsType | null>(null);
+    const [stats, setStats] = useState<UserStatsDTO | null>(null);
     const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -94,9 +89,15 @@ function Navbar() {
 
                     <div className="navbar-actions">
                         {isLoggedIn && stats && (
-                            <div className="navbar-points-badge">
-                                {stats.totalPoints} Punkte
-                            </div>
+                            <>
+                                <div className="navbar-points-badge">
+                                    {stats.totalPoints} Punkte
+                                </div>
+
+                                <div className="navbar-multiplier-badge">
+                                    ⚡ x{stats.currentComboMultiplier.toFixed(2)}
+                                </div>
+                            </>
                         )}
 
                         {!isLoggedIn ? (
@@ -121,9 +122,15 @@ function Navbar() {
 
                         <div className="navbar-actions">
                             {isLoggedIn && stats && (
-                                <div className="navbar-points-badge">
-                                    {stats.totalPoints} Punkte
-                                </div>
+                                <>
+                                    <div className="navbar-points-badge">
+                                        {stats.totalPoints} Punkte
+                                    </div>
+
+                                    <div className="navbar-multiplier-badge">
+                                        ⚡ x{stats.currentComboMultiplier.toFixed(2)}
+                                    </div>
+                                </>
                             )}
 
                             <button
@@ -141,7 +148,7 @@ function Navbar() {
                         <div className="navbar-links navbar-links-mobile">
                             <Link className="navbar-link" to="/" onClick={handleCloseMenu}>🎯 Ereignisse</Link>
                             <Link className="navbar-link" to="/leaderboard" onClick={handleCloseMenu}>🏆 Rangliste</Link>
-                            <Link className="navbar-link" to="/all-predictions" onClick={handleCloseMenu}>📌 Alle Tipps</Link>
+                            <Link className="navbar-link" to="/all-predictions" onClick={handleCloseMenu}>📌 Community Tipps</Link>
 
                             {isLoggedIn && (
                                 <>

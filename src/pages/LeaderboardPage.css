@@ -25,3 +25,10 @@
     background: #fde68a;
     color: #92400e;
 }
+
+.user-substats {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+}

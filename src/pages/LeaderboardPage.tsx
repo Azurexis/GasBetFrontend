@@ -40,11 +40,9 @@ function LeaderboardPage() {
     return (
         <div className="page">
             <div className="page-container">
-                <h1 className="title-card">Rangliste</h1>
-
                 <section className="card">
                     <div className="header">
-                        <h2 className="section-title">Top Spieler</h2>
+                        <h2 className="section-title">Rangliste</h2>
                         <p>
                             Rangliste nach Gesamtpunkten
                         </p>
@@ -71,7 +69,12 @@ function LeaderboardPage() {
                                                 #{index + 1}
                                             </span>
                                         </td>
-                                        <td className="title">{entry.userName}</td>
+                                        <td className="title">
+                                            <div>{entry.userName}</div>
+                                            <div className="user-substats">
+                                                🔥 {entry.currentStreak} &nbsp; ⚡ x{entry.currentComboMultiplier.toFixed(2)}
+                                            </div>
+                                        </td>
                                         <td className="points">{entry.totalPoints}</td>
                                         <td className="desktop-view-table-cell">{entry.correctPredictions}</td>
                                         <td className="desktop-view-table-cell">{entry.wrongPredictions}</td>

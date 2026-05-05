@@ -52,6 +52,27 @@ function MyStatsPage() {
                         <h2>{stats?.userName ?? "-"}</h2>
                     </div>
 
+                    <div className="combo-highlight-grid">
+                        <div className="combo-highlight-box">
+                            <div className="title">🔥 Aktuelle Streak</div>
+                            <div className="combo-value">{stats?.currentStreak ?? "-"}</div>
+                        </div>
+
+                        <div className="combo-highlight-box">
+                            <div className="title">⚡ Combo-Multiplikator</div>
+                            <div className="combo-value">
+                                {stats ? `x${stats.currentComboMultiplier.toFixed(2)}` : "-"}
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <p>
+                        Bei jedem richtigen Tipp steigt deine Streak um 1. Zusätzlich erhöht sich dein Combo-Multiplikator um 10 % der Quote.
+                        <br />
+                        Ein falscher Tipp setzt Streak und Combo-Multiplikator zurück.
+                    </p>
+
                     <div className="stats-grid">
                         <div className="stats-box">
                             <div className="title">Gesamtpunkte</div>

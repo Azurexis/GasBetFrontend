@@ -3,4 +3,6 @@ export type LeaderboardEntry = {
     totalPoints: number;
     correctPredictions: number;
     wrongPredictions: number;
+    currentStreak: number;
+    currentComboMultiplier: number;
 };

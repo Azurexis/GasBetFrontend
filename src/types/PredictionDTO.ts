@@ -10,6 +10,7 @@ export type PredictionDTO = {
     eventOutcome?: EventOutcome;
 
     eventStartsAt?: string;
+    eventLockedAt?: string;
     eventToBeResolvedAt?: string;
 
     eventPriceAtStart?: number | null;

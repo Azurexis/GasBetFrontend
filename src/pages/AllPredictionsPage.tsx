@@ -43,8 +43,6 @@ function AllPredictionsPage() {
     return (
         <div className="page">
             <div className="page-container">
-                <h1 className="page-title title-card">Community Tipps</h1>
-
                 <section className="card">
                     <h2 className="section-title">Community Tipps</h2>
                     <PredictionTable items={predictions} />
