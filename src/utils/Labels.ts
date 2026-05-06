@@ -70,15 +70,16 @@ export function getTimeComparisonLabelRelative(event: EventComparisonSource | nu
 
     const durationHours = getEventDurationHours(event.type);
 
-    const comparisonStart =
-        durationHours === 24 ? event.startsAt : event.lockedAt ?? event.startsAt;
-
-    if (!comparisonStart || !event.toBeResolvedAt) {
+    if (!event.lockedAt || !event.toBeResolvedAt) {
         return "Vergleich: -";
     }
 
     const start = new Date(event.lockedAt);
     const end = new Date(event.toBeResolvedAt);
+
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        return "Vergleich: -";
+    }
 
     const startText = start.toLocaleTimeString("de-DE", {
         hour: "2-digit",
@@ -102,16 +103,11 @@ export function getTimeComparisonLabelAbsolute(event: EventComparisonSource): st
         return "Vergleich: -";
     }
 
-    const durationHours = getEventDurationHours(event.type);
-
-    const comparisonStart =
-        durationHours === 24 ? event.startsAt : event.lockedAt ?? event.startsAt;
-
-    if (!comparisonStart || !event.toBeResolvedAt) {
+    if (!event.lockedAt || !event.toBeResolvedAt) {
         return "Vergleich: -";
     }
 
-    const start = new Date(comparisonStart);
+    const start = new Date(event.lockedAt);
     const end = new Date(event.toBeResolvedAt);
 
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
