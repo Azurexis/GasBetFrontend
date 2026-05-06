@@ -7,7 +7,8 @@ import { useAsyncData } from "../hooks/useAsyncData";
 import "./BetPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { getEventLabel, getFuelLabel, getDirectionLabel, getEventDurationHours, formatPrice, formatQuota, formatDate } from "../utils/index";
+import type { UserStatsDTO } from "../types/UserStatsDTO";
+import { getEventLabel, getFuelLabel, getDirectionLabel, getEventDurationHours, formatQuota, formatDate } from "../utils/index";
 
 function BetPage() {
     const { id } = useParams();
@@ -35,6 +36,20 @@ function BetPage() {
             );
         },
         id
+        );
+    const {
+        data: stats,
+        errorMessage: statsErrorMessage
+    } = useAsyncData<UserStatsDTO | null>(
+        null,
+        () =>
+            fetchJson<UserStatsDTO>(
+                `${import.meta.env.VITE_API_BASE_URL}/api/users/me/stats`,
+                "Failed to load stats.",
+                undefined,
+                authFetch
+            ),
+        "user-stats"
     );
 
     async function handleSubmit(event: React.FormEvent) {
@@ -120,13 +135,8 @@ function BetPage() {
         return <div className="message-box">Ereignis nicht gefunden.</div>;
     }
 
-    const durationHours = getEventDurationHours(eventItem.type);
-    const isShortEvent = durationHours !== 24;
-
-    const displayedPrice = eventItem.priceAtStart;
-    const displayedPriceTitle = isShortEvent
-        ? "Aktueller Preis"
-        : `Preis am ${formatDate(eventItem.startsAt)}`;
+    const comboMultiplier = stats?.currentComboMultiplier ?? 1;
+    const quotaWithCombo = eventItem.quota * comboMultiplier;
 
     return (
         <div className="page">
@@ -147,22 +157,23 @@ function BetPage() {
 
                     <div className="place-bet-info-grid">
                         <div className="place-bet-info-box">
-                            <h3>{displayedPriceTitle}</h3>
-                            <div className="title">
-                                {formatPrice(displayedPrice)}
-                            </div>
-                        </div>
-
-                        <div className="place-bet-info-box">
                             <h3>Quote</h3>
                             <div className="title">
                                 x{formatQuota(eventItem.quota)}
                             </div>
                         </div>
+
+                        <div className="place-bet-info-box">
+                            <h3>Quote mit Combo-Multiplikator</h3>
+                            <div className="title">
+                                x{formatQuota(quotaWithCombo)}
+                            </div>
+                        </div>
                     </div>
 
-                    <span className="sub-text">
-                        Ist dein Tipp richtig, werden deine gesetzten Punkte mit x{formatQuota(eventItem.quota)} multipliziert. Ist dein Tipp falsch, bekommst du keine Punkte zurück.
+                    <span className="sub-text"> 
+                        Ist dein Tipp richtig, werden deine gesetzten Punkte mit x{formatQuota(quotaWithCombo)} multipliziert.
+                        Ist dein Tipp falsch, bekommst du keine Punkte zurück.
                     </span>
 
                     <form className="place-bet-form" onSubmit={handleSubmit}>
