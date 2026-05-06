@@ -39,7 +39,6 @@ function BetPage() {
         );
     const {
         data: stats,
-        errorMessage: statsErrorMessage
     } = useAsyncData<UserStatsDTO | null>(
         null,
         () =>
