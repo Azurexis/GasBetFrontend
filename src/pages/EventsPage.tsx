@@ -55,6 +55,13 @@ function EventsPage() {
         return `aktuell ${formatPrice(eventItem.priceAtStart)}`;
     }
 
+    function hasAnyEventForRow(row: (typeof eventMarketRows)[number]) {
+        return fuelEventGroups.some((fuelGroup) => {
+            const eventType = fuelGroup[row.eventKey];
+            return !!getEventByType(eventType);
+        });
+    }
+
     function renderBetCell(type: EventTypeName) {
         const eventItem = getEventByType(type);
 
@@ -141,7 +148,9 @@ function EventsPage() {
                 </div>
 
                 <div className="mobile-card-body">
-                    {eventMarketRows.map((row) => renderMobileBetOption(row.label, fuelGroup[row.eventKey]))}
+                    {eventMarketRows
+                        .filter((row) => !!getEventByType(fuelGroup[row.eventKey]))
+                        .map((row) => renderMobileBetOption(row.label, fuelGroup[row.eventKey]))}
                 </div>
             </section>
         );
@@ -199,30 +208,32 @@ function EventsPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {eventMarketRows.map((row) => {
-                                    const leadType = fuelEventGroups[0][row.eventKey];
+                                {eventMarketRows
+                                    .filter(hasAnyEventForRow)
+                                    .map((row) => {
+                                        const leadType = fuelEventGroups[0][row.eventKey];
 
-                                    return (
-                                        <tr key={row.eventKey}>
-                                            <th>
-                                                <div className="title">
-                                                    <div>{row.label}</div>
-                                                    <div className="sub-title">
-                                                        {getTimeComparisonLabelRelative(getEventByType(leadType) ?? null)}
+                                        return (
+                                            <tr key={row.eventKey}>
+                                                <th>
+                                                    <div className="title">
+                                                        <div>{row.label}</div>
+                                                        <div className="sub-title">
+                                                            {getTimeComparisonLabelRelative(getEventByType(leadType) ?? null)}
+                                                        </div>
+                                                        <div className="sub-title">
+                                                            {formatLockHint(leadType)}
+                                                        </div>
                                                     </div>
-                                                    <div className="sub-title">
-                                                        {formatLockHint(leadType)}
-                                                    </div>
-                                                </div>
-                                            </th>
-                                            {fuelEventGroups.map((fuelGroup) => (
-                                                <td key={fuelGroup.name}>
-                                                    {renderBetCell(fuelGroup[row.eventKey])}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    );
-                                })}
+                                                </th>
+                                                {fuelEventGroups.map((fuelGroup) => (
+                                                    <td key={fuelGroup.name}>
+                                                        {renderBetCell(fuelGroup[row.eventKey])}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        );
+                                    })}
                             </tbody>
                         </table>
                     </div>
