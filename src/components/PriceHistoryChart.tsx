@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
     LineChart,
     Line,
@@ -9,6 +8,9 @@ import {
     ResponsiveContainer
 } from "recharts";
 
+import { fetchJson } from "../api/fetchJson";
+import { priceHistoryHours, referenceStation } from "../config/referenceStation";
+import { useAsyncData } from "../hooks/useAsyncData";
 import "./PriceHistoryChart.css";
 
 type PriceHistoryPoint = {
@@ -81,62 +83,33 @@ function formatTick(value: number): string {
 }
 
 function PriceHistoryChart() {
-    const [data, setData] = useState<ChartPoint[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState("");
+    const { data, isLoading, errorMessage } = useAsyncData<ChartPoint[]>(
+        [],
+        async () => {
+            const rawData = await fetchJson<PriceHistoryPoint[]>(
+                `${import.meta.env.VITE_API_BASE_URL}/api/snapshots/price-history?stationId=${referenceStation.id}&hours=${priceHistoryHours}`,
+                "Failed to load price history."
+            );
 
-    useEffect(() => {
-        async function loadPriceHistory() {
-            try {
-                setErrorMessage("");
-                setIsLoading(true);
-
-                const stationId = "b60a7521-19f9-4886-8ebe-dcbcb2c58d64";
-                const hours = 72;
-
-                const response = await fetch(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/snapshots/price-history?stationId=${stationId}&hours=${hours}`
-                );
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load price history.");
-                }
-
-                const rawData: PriceHistoryPoint[] = await response.json();
-
-                const mappedData = rawData.map((point) => ({
-                    time: new Date(point.recordedAt).getTime(),
-                    dieselPrice: point.dieselPrice,
-                    e5Price: point.e5Price,
-                    e10Price: point.e10Price
-                }));
-
-                setData(mappedData);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            } finally {
-                setIsLoading(false);
-            }
+            return rawData.map((point) => ({
+                time: new Date(point.recordedAt).getTime(),
+                dieselPrice: point.dieselPrice,
+                e5Price: point.e5Price,
+                e10Price: point.e10Price
+            }));
         }
-
-        loadPriceHistory();
-    }, []);
+    );
 
     if (isLoading) {
-        return <p>Loading price history...</p>;
+        return <p>Preisverlauf wird geladen...</p>;
     }
 
     if (errorMessage) {
-        return <p>Error loading chart: {errorMessage}</p>;
+        return <p>Fehler beim Laden des Preisverlaufs: {errorMessage}</p>;
     }
 
     if (data.length === 0) {
-        return <p>No price history found.</p>;
+        return <p>Kein Preisverlauf gefunden.</p>;
     }
 
     const lastIndex = data.length - 1;

@@ -1,44 +1,31 @@
-import { useEffect, useState } from "react";
 import { authFetch } from "../api/authFetch";
+import { fetchJson } from "../api/fetchJson";
+import { useAsyncData } from "../hooks/useAsyncData";
 import "./MyStatsPage.css";
 
 import type { UserStatsDTO } from "../types/UserStatsDTO";
 
 function MyStatsPage() {
-    const [stats, setStats] = useState<UserStatsDTO | null>(null);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        async function loadStats() {
-            try {
-                setErrorMessage("");
-
-                const response = await authFetch(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/users/me/stats`,
-                    { method: "GET" }
-                );
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load stats.");
-                }
-
-                const data = await response.json();
-                setStats(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            }
-        }
-
-        loadStats();
-    }, []);
+    const { data: stats, isLoading, errorMessage } = useAsyncData<UserStatsDTO | null>(
+        null,
+        () => fetchJson<UserStatsDTO>(
+            `${import.meta.env.VITE_API_BASE_URL}/api/users/me/stats`,
+            "Failed to load stats.",
+            { method: "GET" },
+            authFetch
+        )
+    );
 
     if (errorMessage) {
         return <div className="message-box error">Fehler: {errorMessage}</div>;
+    }
+
+    if (isLoading) {
+        return <div className="message-box">Statistik wird geladen...</div>;
+    }
+
+    if (!stats) {
+        return <div className="message-box">Keine Statistik gefunden.</div>;
     }
 
     return (
@@ -49,19 +36,19 @@ function MyStatsPage() {
                 <section className="card">
                     <div className="header">
                         <h3>Spieler</h3>
-                        <h2>{stats?.userName ?? "-"}</h2>
+                        <h2>{stats.userName}</h2>
                     </div>
 
                     <div className="combo-highlight-grid">
                         <div className="combo-highlight-box">
                             <div className="title">🔥 Aktuelle Streak</div>
-                            <div className="combo-value">{stats?.currentStreak ?? "-"}</div>
+                            <div className="combo-value">{stats.currentStreak}</div>
                         </div>
 
                         <div className="combo-highlight-box">
                             <div className="title">⚡ Combo-Multiplikator</div>
                             <div className="combo-value">
-                                {stats ? `x${stats.currentComboMultiplier.toFixed(2)}` : "-"}
+                                {`x${stats.currentComboMultiplier.toFixed(2)}`}
                             </div>
                         </div>
                     </div>
@@ -77,21 +64,21 @@ function MyStatsPage() {
                         <div className="stats-box">
                             <div className="title">Gesamtpunkte</div>
                             <div className="stats-box-value stats-box-value-primary">
-                                {stats?.totalPoints ?? "-"}
+                                {stats.totalPoints}
                             </div>
                         </div>
 
                         <div className="stats-box">
                             <div className="title">Richtige Tipps</div>
                             <div className="stats-box-value stats-box-value-success">
-                                {stats?.correctPredictions ?? "-"}
+                                {stats.correctPredictions}
                             </div>
                         </div>
 
                         <div className="stats-box">
                             <div className="title">Falsche Tipps</div>
                             <div className="stats-box-value stats-box-value-failure">
-                                {stats?.wrongPredictions ?? "-"}
+                                {stats.wrongPredictions}
                             </div>
                         </div>
                     </div>

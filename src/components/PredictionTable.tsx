@@ -49,7 +49,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                             <td className="points">
                                 {prediction.pointsStaked}
                             </td>
-                            <td>{formatPrice(prediction.eventPriceAtLocked)}</td>
+                            <td>{formatPrice(prediction.eventPriceAtLock)}</td>
                             <td>{formatPrice(prediction.eventPriceAtResolved)}</td>
                             <td>x{formatQuota(prediction.eventQuota)}</td>
                             <td>

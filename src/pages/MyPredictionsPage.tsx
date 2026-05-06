@@ -1,45 +1,28 @@
-import { useEffect, useState } from "react";
 import { authFetch } from "../api/authFetch";
+import { fetchJson } from "../api/fetchJson";
 import { PredictionTable } from "../components/PredictionTable";
 import { PredictionCards } from "../components/PredictionCards";
+import { useAsyncData } from "../hooks/useAsyncData";
 
 import type { PredictionDTO } from "../types/PredictionDTO";
 
 function MyPredictionsPage() {
-    const [predictions, setPredictions] = useState<PredictionDTO[]>([]);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        async function loadPredictions() {
-            try {
-                setErrorMessage("");
-
-                const response = await authFetch(
-                    `${import.meta.env.VITE_API_BASE_URL}/api/users/me/all-predictions`,
-                    { method: "GET" }
-                );
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load predictions.");
-                }
-
-                const data = await response.json();
-                setPredictions(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            }
-        }
-
-        loadPredictions();
-    }, []);
+    const { data: predictions, isLoading, errorMessage } = useAsyncData<PredictionDTO[]>(
+        [],
+        () => fetchJson<PredictionDTO[]>(
+            `${import.meta.env.VITE_API_BASE_URL}/api/users/me/all-predictions`,
+            "Failed to load predictions.",
+            { method: "GET" },
+            authFetch
+        )
+    );
 
     if (errorMessage) {
         return <div className="message-box error">Fehler: {errorMessage}</div>;
+    }
+
+    if (isLoading) {
+        return <div className="message-box">Deine Tipps werden geladen...</div>;
     }
 
     const activePredictions = predictions.filter(

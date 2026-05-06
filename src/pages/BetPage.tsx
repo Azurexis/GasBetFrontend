@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { authFetch } from "../api/authFetch";
+import { fetchJson } from "../api/fetchJson";
+import { referenceStation } from "../config/referenceStation";
+import { useAsyncData } from "../hooks/useAsyncData";
 import "./BetPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
@@ -10,40 +13,29 @@ function BetPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [eventItem, setEventItem] = useState<EventDTO | null>(null);
     const [points, setPoints] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        async function loadEvent() {
-            try {
-                setErrorMessage("");
-                setIsLoading(true);
-
-                const response = await authFetch(`${import.meta.env.VITE_API_BASE_URL}/api/events/${id}`);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load event.");
-                }
-
-                const data = await response.json();
-                setEventItem(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            } finally {
-                setIsLoading(false);
+    const {
+        data: eventItem,
+        isLoading,
+        errorMessage: loadErrorMessage
+    } = useAsyncData<EventDTO | null>(
+        null,
+        () => {
+            if (!id) {
+                throw new Error("Missing event id.");
             }
-        }
 
-        loadEvent();
-    }, [id]);
+            return fetchJson<EventDTO>(
+                `${import.meta.env.VITE_API_BASE_URL}/api/events/${id}`,
+                "Failed to load event.",
+                undefined,
+                authFetch
+            );
+        },
+        id
+    );
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
@@ -92,37 +84,36 @@ function BetPage() {
 
         const durationHours = getEventDurationHours(eventItem.type);
 
-        const comparisonStart =
-            durationHours === 24 ? eventItem.startsAt : eventItem.lockedAt;
-
         const resolvedAtText = formatDate(eventItem.toBeResolvedAt);
-        const comparisonStartText = formatDate(comparisonStart);
+        const lockedAtText = formatDate(eventItem.lockedAt);
 
         if (durationHours === 24) {
             return (
                 <>
-                    Du setzt darauf, dass der {fuel} bei der Tankstelle Aral (Erlanger Str. 98, Fürth) morgen, am{" "}
+                    Du setzt darauf, dass der {fuel} bei der Tankstelle {referenceStation.brand} ({referenceStation.address}) morgen, am{" "}
                     <strong>{resolvedAtText}</strong> {direction} sein wird als heute, am{" "}
-                    <strong>{comparisonStartText}</strong>.
+                    <strong>{lockedAtText}</strong>.
                 </>
             );
         }
 
         return (
             <>
-                Du setzt darauf, dass der {fuel} bei der Tankstelle Aral (Erlanger Str. 98, Fürth) um{" "}
+                Du setzt darauf, dass der {fuel} bei der Tankstelle {referenceStation.brand} ({referenceStation.address}) um{" "}
                 <strong>{resolvedAtText}</strong> {direction} sein wird als zum Tippschluss um{" "}
-                <strong>{comparisonStartText}</strong>.
+                <strong>{lockedAtText}</strong>.
             </>
         );
     }
 
     if (isLoading) {
-        return null;
+        return <div className="message-box">Ereignis wird geladen...</div>;
     }
 
-    if (errorMessage) {
-        return <div className="message-box error">Fehler: {errorMessage}</div>;
+    const displayedErrorMessage = errorMessage || loadErrorMessage;
+
+    if (displayedErrorMessage) {
+        return <div className="message-box error">Fehler: {displayedErrorMessage}</div>;
     }
 
     if (!eventItem) {

@@ -1,40 +1,24 @@
-import { useEffect, useState } from "react";
+import { fetchJson } from "../api/fetchJson";
+import { useAsyncData } from "../hooks/useAsyncData";
 import "./LeaderboardPage.css";
 
 import type { LeaderboardEntry } from "../types/LeaderboardEntry";
 
 function LeaderboardPage() {
-    const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        async function loadLeaderboard() {
-            try {
-                setErrorMessage("");
-
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/leaderboard`);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load leaderboard.");
-                }
-
-                const data = await response.json();
-                setEntries(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            }
-        }
-
-        loadLeaderboard();
-    }, []);
+    const { data: entries, isLoading, errorMessage } = useAsyncData<LeaderboardEntry[]>(
+        [],
+        () => fetchJson<LeaderboardEntry[]>(
+            `${import.meta.env.VITE_API_BASE_URL}/api/users/leaderboard`,
+            "Failed to load leaderboard."
+        )
+    );
 
     if (errorMessage) {
         return <div className="message-box error">Fehler: {errorMessage}</div>;
+    }
+
+    if (isLoading) {
+        return <div className="message-box">Rangliste wird geladen...</div>;
     }
 
     return (

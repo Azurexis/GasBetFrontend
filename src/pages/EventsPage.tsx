@@ -1,42 +1,34 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchJson } from "../api/fetchJson";
 import PriceHistoryChart from "../components/PriceHistoryChart";
+import { eventMarketRows, fuelEventGroups } from "../config/eventCatalog";
+import type { FuelEventConfig } from "../config/eventCatalog";
+import { referenceStation } from "../config/referenceStation";
+import { useAsyncData } from "../hooks/useAsyncData";
 import "./EventsPage.css";
 
-import type { EventDTO } from "../types/EventDTO";
+import type { EventDTO, EventTypeName } from "../types/EventDTO";
 import { formatPrice, formatQuota, getStatusLabel, getTimeComparisonLabelRelative } from "../utils/index";
 
 function EventsPage() {
     const navigate = useNavigate();
+    const { data: events, isLoading, errorMessage } = useAsyncData<EventDTO[]>(
+        [],
+        () => fetchJson<EventDTO[]>(
+            `${import.meta.env.VITE_API_BASE_URL}/api/events`,
+            "Failed to load events."
+        )
+    );
 
-    const [events, setEvents] = useState<EventDTO[]>([]);
-    const [errorMessage, setErrorMessage] = useState("");
-
-    useEffect(() => {
-        async function loadEvents() {
-            try {
-                setErrorMessage("");
-
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/events`);
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || "Failed to load events.");
-                }
-
-                const data = await response.json();
-                setEvents(data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
-            }
-        }
-
-        loadEvents();
-    }, []);
+    function renderPageMessage(message: string, isError = false) {
+        return (
+            <div className="page">
+                <div className="page-container">
+                    <div className={`message-box${isError ? " error" : ""}`}>{message}</div>
+                </div>
+            </div>
+        );
+    }
 
     function handleBet(eventId: number) {
         const token = localStorage.getItem("token");
@@ -49,11 +41,11 @@ function EventsPage() {
         navigate(`/events/${eventId}/bet`);
     }
 
-    function getEventByType(type: string) {
-        return events.find(eventItem => eventItem.type === type);
+    function getEventByType(type: EventTypeName) {
+        return events.find((eventItem) => eventItem.type === type);
     }
 
-    function formatPriceForHeader(type: string): string {
+    function formatPriceForHeader(type: EventTypeName): string {
         const eventItem = getEventByType(type);
 
         if (!eventItem || eventItem.priceAtStart === null || eventItem.priceAtStart === undefined) {
@@ -63,7 +55,7 @@ function EventsPage() {
         return `aktuell ${formatPrice(eventItem.priceAtStart)}`;
     }
 
-    function renderBetCell(type: string) {
+    function renderBetCell(type: EventTypeName) {
         const eventItem = getEventByType(type);
 
         if (!eventItem) {
@@ -107,7 +99,7 @@ function EventsPage() {
         );
     }
 
-    function formatLockHint(type: string): string {
+    function formatLockHint(type: EventTypeName): string {
         const eventItem = getEventByType(type);
 
         if (!eventItem) {
@@ -124,7 +116,7 @@ function EventsPage() {
         return `Tippschluss: heute ${lockedAtText}`;
     }
 
-    function renderMobileBetOption(label: string, type: string) {
+    function renderMobileBetOption(label: string, type: EventTypeName) {
         return (
             <div className="mobile-bet-option">
                 <div className="mobile-bet-option-info">
@@ -140,27 +132,27 @@ function EventsPage() {
         );
     }
 
-    function renderMobileFuelCard(fuelName: string, currentPriceType: string, riseType: string, fallType: string, staySameType: string, fallShortType: string, staySameShortType: string) {
+    function renderMobileFuelCard(fuelGroup: FuelEventConfig) {
         return (
-            <section className="mobile-card" key={fuelName}>
+            <section className="mobile-card" key={fuelGroup.name}>
                 <div className="mobile-card-header">
-                    <h2 className="mobile-card-title">{fuelName}</h2>
-                    <div className="mobile-fuel-card-price">{formatPriceForHeader(currentPriceType)}</div>
+                    <h2 className="mobile-card-title">{fuelGroup.name}</h2>
+                    <div className="mobile-fuel-card-price">{formatPriceForHeader(fuelGroup.currentPriceType)}</div>
                 </div>
 
                 <div className="mobile-card-body">
-                    {renderMobileBetOption("📈 Preis ist morgen höher", riseType)}
-                    {renderMobileBetOption("📉 Preis ist morgen niedriger", fallType)}
-                    {renderMobileBetOption("⚖️ Preis ist morgen gleich", staySameType)}
-                    {renderMobileBetOption("↘️ Preis fällt nächste Stunde", fallShortType)}
-                    {renderMobileBetOption("➡️ Preis bleibt nächste Stunde gleich", staySameShortType)}
+                    {eventMarketRows.map((row) => renderMobileBetOption(row.label, fuelGroup[row.eventKey]))}
                 </div>
             </section>
         );
     }
 
+    if (isLoading) {
+        return renderPageMessage("Ereignisse werden geladen...");
+    }
+
     if (errorMessage) {
-        return <div className="message-box error">Fehler: {errorMessage}</div>;
+        return renderPageMessage(`Fehler: ${errorMessage}`, true);
     }
 
     return (
@@ -173,8 +165,8 @@ function EventsPage() {
                             <div className="station-card-icon">🟦⛽</div>
                             <div>
                                 <div className="station-card-label">Referenztankstelle</div>
-                                <h2 className="station-card-name">Aral</h2>
-                                <div className="station-card-address">Erlanger Str. 98, 90765 Fürth</div>
+                                <h2 className="station-card-name">{referenceStation.brand}</h2>
+                                <div className="station-card-address">{referenceStation.address}</div>
                             </div>
                         </div>
                     </section>
@@ -189,138 +181,54 @@ function EventsPage() {
 
                     <h2 className="section-title">Verfügbare Ereignisse</h2>
 
-                    {/* Desktop table */}
                     <div className="desktop-view">
                         <table className="events-table">
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>
-                                        <div className="fuel-header">
-                                            <div>Diesel</div>
-                                            <div className="fuel-header-price sub-title">
-                                                {formatPriceForHeader("DieselWillRiseNext24h")}
+                                    {fuelEventGroups.map((fuelGroup) => (
+                                        <th key={fuelGroup.name}>
+                                            <div className="fuel-header">
+                                                <div>{fuelGroup.name}</div>
+                                                <div className="fuel-header-price sub-title">
+                                                    {formatPriceForHeader(fuelGroup.currentPriceType)}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div className="fuel-header">
-                                            <div>E10</div>
-                                            <div className="fuel-header-price sub-title">
-                                                {formatPriceForHeader("E10WillRiseNext24h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div className="fuel-header">
-                                            <div>E5</div>
-                                            <div className="fuel-header-price sub-title">
-                                                {formatPriceForHeader("E5WillRiseNext24h")}
-                                            </div>
-                                        </div>
-                                    </th>
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th>
-                                        <div className="title">
-                                            <div>📈 Preis ist morgen höher (oder gleich)</div>
-                                            <div className="sub-title">
-                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillRiseNext24h") ?? null)}
-                                            </div>
-                                            <div className="sub-title">
-                                                {formatLockHint("DieselWillRiseNext24h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td>{renderBetCell("DieselWillRiseNext24h")}</td>
-                                    <td>{renderBetCell("E10WillRiseNext24h")}</td>
-                                    <td>{renderBetCell("E5WillRiseNext24h")}</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <div className="title">
-                                            <div>📉 Preis ist morgen niedriger (oder gleich)</div>
-                                            <div className="sub-title">
-                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillFallNext24h") ?? null)}
-                                            </div>
-                                            <div className="sub-title">
-                                                {formatLockHint("DieselWillFallNext24h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td>{renderBetCell("DieselWillFallNext24h")}</td>
-                                    <td>{renderBetCell("E10WillFallNext24h")}</td>
-                                    <td>{renderBetCell("E5WillFallNext24h")}</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <div className="title">
-                                            <div>↘️ Preis fällt nächste Stunde</div>
-                                            <div className="sub-title">
-                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillFallNext2h") ?? null)}
-                                            </div>
-                                            <div className="sub-title">
-                                                {formatLockHint("DieselWillFallNext2h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td>{renderBetCell("DieselWillFallNext2h")}</td>
-                                    <td>{renderBetCell("E10WillFallNext2h")}</td>
-                                    <td>{renderBetCell("E5WillFallNext2h")}</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <div className="title">
-                                            <div>➡️ Preis bleibt nächste Stunde gleich</div>
-                                            <div className="sub-title">
-                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillStaySameNext2h") ?? null)}
-                                            </div>
-                                            <div className="sub-title">
-                                                {formatLockHint("DieselWillStaySameNext2h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td>{renderBetCell("DieselWillStaySameNext2h")}</td>
-                                    <td>{renderBetCell("E10WillStaySameNext2h")}</td>
-                                    <td>{renderBetCell("E5WillStaySameNext2h")}</td>
-                                </tr>
+                                {eventMarketRows.map((row) => {
+                                    const leadType = fuelEventGroups[0][row.eventKey];
+
+                                    return (
+                                        <tr key={row.eventKey}>
+                                            <th>
+                                                <div className="title">
+                                                    <div>{row.label}</div>
+                                                    <div className="sub-title">
+                                                        {getTimeComparisonLabelRelative(getEventByType(leadType) ?? null)}
+                                                    </div>
+                                                    <div className="sub-title">
+                                                        {formatLockHint(leadType)}
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            {fuelEventGroups.map((fuelGroup) => (
+                                                <td key={fuelGroup.name}>
+                                                    {renderBetCell(fuelGroup[row.eventKey])}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
 
-                    {/* Mobile cards */}
                     <div className="mobile-view">
-                        {renderMobileFuelCard(
-                            "Diesel",
-                            "DieselWillRiseNext24h",
-                            "DieselWillRiseNext24h",
-                            "DieselWillFallNext24h",
-                            "DieselWillStaySameNext24h",
-                            "DieselWillFallNext2h",
-                            "DieselWillStaySameNext2h"
-                        )}
-
-                        {renderMobileFuelCard(
-                            "E10",
-                            "E10WillRiseNext24h",
-                            "E10WillRiseNext24h",
-                            "E10WillFallNext24h",
-                            "E10WillStaySameNext24h",
-                            "E10WillFallNext2h",
-                            "E10WillStaySameNext2h"
-                        )}
-
-                        {renderMobileFuelCard(
-                            "E5",
-                            "E5WillRiseNext24h",
-                            "E5WillRiseNext24h",
-                            "E5WillFallNext24h",
-                            "E5WillStaySameNext24h",
-                            "E5WillFallNext2h",
-                            "E5WillStaySameNext2h"
-                        )}
+                        {fuelEventGroups.map((fuelGroup) => renderMobileFuelCard(fuelGroup))}
                     </div>
                 </section>
             </div>

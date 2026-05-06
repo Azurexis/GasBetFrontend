@@ -1,44 +1,35 @@
+import type { EventTypeName } from "../types/EventDTO";
+
+const eventLabels: Record<EventTypeName, string> = {
+    DieselWillRiseNext24h: "📈 Dieselpreis ist morgen höher (oder gleich)",
+    DieselWillFallNext24h: "📉 Dieselpreis ist morgen niedriger (oder gleich)",
+    DieselWillFallNext2h: "↘️ Dieselpreis fällt nächste Stunde",
+    DieselWillStaySameNext2h: "➡️ Dieselpreis bleibt nächste Stunde gleich",
+    E10WillRiseNext24h: "📈 E10-Preis ist morgen höher (oder gleich)",
+    E10WillFallNext24h: "📉 E10-Preis ist morgen niedriger (oder gleich)",
+    E10WillFallNext2h: "↘️ E10-Preis fällt nächste Stunde",
+    E10WillStaySameNext2h: "➡️ E10-Preis bleibt nächste Stunde gleich",
+    E5WillRiseNext24h: "📈 E5-Preis ist morgen höher (oder gleich)",
+    E5WillFallNext24h: "📉 E5-Preis ist morgen niedriger (oder gleich)",
+    E5WillFallNext2h: "↘️ E5-Preis fällt nächste Stunde",
+    E5WillStaySameNext2h: "➡️ E5-Preis bleibt nächste Stunde gleich"
+};
+
 //Types
 type EventComparisonSource = {
-    type: string;
+    type: EventTypeName | string;
     startsAt?: string | null;
     lockedAt?: string | null;
     toBeResolvedAt?: string | null;
 };
 
 //Functions
-export function getEventLabel(eventType?: string): string {
-    switch (eventType) {
-        case "DieselWillRiseNext24h":
-            return "📈 Dieselpreis ist morgen höher (oder gleich)";
-        case "DieselWillFallNext24h":
-            return "📉 Dieselpreis ist morgen niedriger (oder gleich)";
-        case "DieselWillFallNext2h":
-            return "↘️ Dieselpreis fällt nächste Stunde";
-        case "DieselWillStaySameNext2h":
-            return "➡️ Dieselpreis bleibt nächste Stunde gleich";
-
-        case "E10WillRiseNext24h":
-            return "📈 E10-Preis ist morgen höher (oder gleich)";
-        case "E10WillFallNext24h":
-            return "📉 E10-Preis ist morgen niedriger (oder gleich)";
-        case "E10WillFallNext2h":
-            return "↘️ E10-Preis fällt nächste Stunde";
-        case "E10WillStaySameNext2h":
-            return "➡️ E10-Preis bleibt nächste Stunde gleich";
-
-        case "E5WillRiseNext24h":
-            return "📈 E5-Preis ist morgen höher (oder gleich)";
-        case "E5WillFallNext24h":
-            return "📉 E5-Preis ist morgen niedriger (oder gleich)";
-        case "E5WillFallNext2h":
-            return "↘️ E5-Preis fällt nächste Stunde";
-        case "E5WillStaySameNext2h":
-            return "➡️ E5-Preis bleibt nächste Stunde gleich";
-
-        default:
-            return "Unbekanntes Ereignis";
+export function getEventLabel(eventType?: EventTypeName | string): string {
+    if (!eventType || !(eventType in eventLabels)) {
+        return "Unbekanntes Ereignis";
     }
+
+    return eventLabels[eventType as EventTypeName];
 }
 
 export function getFuelLabel(type: string): string {
