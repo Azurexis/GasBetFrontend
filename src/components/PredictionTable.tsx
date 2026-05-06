@@ -1,5 +1,5 @@
 import type { PredictionDTO } from "../types/PredictionDTO";
-import {getEventLabel, getTimeComparisonLabelGeneral, getOutcomeLabel, formatPrice, formatQuota } from "../utils/index";
+import {getEventLabel, getTimeComparisonLabelAbsolute, getOutcomeLabel, formatPrice, formatQuota } from "../utils/index";
 
 type PredictionTableProps = {
     items: PredictionDTO[];
@@ -26,7 +26,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                     <tr>
                         <th>Ereignis</th>
                         <th>Punkte</th>
-                        <th>Preis bei Abgabe</th>
+                        <th>Preis bei Tippschluss</th>
                         <th>Preis bei Auflösung</th>
                         <th>Quote</th>
                         <th>Ergebnis</th>
@@ -38,7 +38,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                             <td className="title">
                                 <div>{getEventLabel(prediction.eventType)}</div>
                                 <div className="sub-title">
-                                    {getTimeComparisonLabelGeneral({
+                                    {getTimeComparisonLabelAbsolute({
                                         type: prediction.eventType ?? "",
                                         startsAt: prediction.eventStartsAt,
                                         lockedAt: prediction.eventLockedAt,
@@ -49,7 +49,7 @@ export function PredictionTable({ items }: PredictionTableProps) {
                             <td className="points">
                                 {prediction.pointsStaked}
                             </td>
-                            <td>{formatPrice(prediction.eventPriceAtStart)}</td>
+                            <td>{formatPrice(prediction.eventPriceAtLocked)}</td>
                             <td>{formatPrice(prediction.eventPriceAtResolved)}</td>
                             <td>x{formatQuota(prediction.eventQuota)}</td>
                             <td>

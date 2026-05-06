@@ -14,6 +14,7 @@ export type PredictionDTO = {
     eventToBeResolvedAt?: string;
 
     eventPriceAtStart?: number | null;
+    eventPriceAtLocked?: number | null;
     eventPriceAtResolved?: number | null;
     eventQuota?: number | null;
 

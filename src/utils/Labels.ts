@@ -10,33 +10,27 @@ type EventComparisonSource = {
 export function getEventLabel(eventType?: string): string {
     switch (eventType) {
         case "DieselWillRiseNext24h":
-            return "📈 Dieselpreis ist morgen höher";
+            return "📈 Dieselpreis ist morgen höher (oder gleich)";
         case "DieselWillFallNext24h":
-            return "📉 Dieselpreis ist morgen niedriger";
-        case "DieselWillStaySameNext24h":
-            return "⚖️ Dieselpreis ist morgen gleich";
+            return "📉 Dieselpreis ist morgen niedriger (oder gleich)";
         case "DieselWillFallNext2h":
             return "↘️ Dieselpreis fällt nächste Stunde";
         case "DieselWillStaySameNext2h":
             return "➡️ Dieselpreis bleibt nächste Stunde gleich";
 
         case "E10WillRiseNext24h":
-            return "📈 E10-Preis ist morgen höher";
+            return "📈 E10-Preis ist morgen höher (oder gleich)";
         case "E10WillFallNext24h":
-            return "📉 E10-Preis ist morgen niedriger";
-        case "E10WillStaySameNext24h":
-            return "⚖️ E10-Preis ist morgen gleich";
+            return "📉 E10-Preis ist morgen niedriger (oder gleich)";
         case "E10WillFallNext2h":
             return "↘️ E10-Preis fällt nächste Stunde";
         case "E10WillStaySameNext2h":
             return "➡️ E10-Preis bleibt nächste Stunde gleich";
 
         case "E5WillRiseNext24h":
-            return "📈 E5-Preis ist morgen höher";
+            return "📈 E5-Preis ist morgen höher (oder gleich)";
         case "E5WillFallNext24h":
-            return "📉 E5-Preis ist morgen niedriger";
-        case "E5WillStaySameNext24h":
-            return "⚖️ E5-Preis ist morgen gleich";
+            return "📉 E5-Preis ist morgen niedriger (oder gleich)";
         case "E5WillFallNext2h":
             return "↘️ E5-Preis fällt nächste Stunde";
         case "E5WillStaySameNext2h":
@@ -69,7 +63,7 @@ export function getEventDurationHours(type: string): number {
     return 24;
 }
 
-export function getTimeComparisonLabelNow(event: EventComparisonSource | null | undefined): string {
+export function getTimeComparisonLabelRelative(event: EventComparisonSource | null | undefined): string {
     if (!event || !event.type) {
         return "Vergleich: -";
     }
@@ -83,7 +77,7 @@ export function getTimeComparisonLabelNow(event: EventComparisonSource | null | 
         return "Vergleich: -";
     }
 
-    const start = new Date(comparisonStart);
+    const start = new Date(event.lockedAt);
     const end = new Date(event.toBeResolvedAt);
 
     const startText = start.toLocaleTimeString("de-DE", {
@@ -103,7 +97,7 @@ export function getTimeComparisonLabelNow(event: EventComparisonSource | null | 
     return `Vergleich: heute ${startText} ↔ heute ${endText}`;
 }
 
-export function getTimeComparisonLabelGeneral(event: EventComparisonSource): string {
+export function getTimeComparisonLabelAbsolute(event: EventComparisonSource): string {
     if (!event || !event.type) {
         return "Vergleich: -";
     }

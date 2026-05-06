@@ -4,7 +4,7 @@ import PriceHistoryChart from "../components/PriceHistoryChart";
 import "./EventsPage.css";
 
 import type { EventDTO } from "../types/EventDTO";
-import { formatPrice, formatQuota, getStatusLabel, getTimeComparisonLabelNow } from "../utils/index";
+import { formatPrice, formatQuota, getStatusLabel, getTimeComparisonLabelRelative } from "../utils/index";
 
 function EventsPage() {
     const navigate = useNavigate();
@@ -129,7 +129,7 @@ function EventsPage() {
             <div className="mobile-bet-option">
                 <div className="mobile-bet-option-info">
                     <div className="title">{label}</div>
-                    <div className="sub-title">{getTimeComparisonLabelNow(getEventByType(type) ?? null)}</div>
+                    <div className="sub-title">{getTimeComparisonLabelRelative(getEventByType(type) ?? null)}</div>
                     <div className="sub-title">{formatLockHint(type)}</div>
                 </div>
 
@@ -225,9 +225,9 @@ function EventsPage() {
                                 <tr>
                                     <th>
                                         <div className="title">
-                                            <div>📈 Preis ist morgen höher</div>
+                                            <div>📈 Preis ist morgen höher (oder gleich)</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillRiseNext24h") ?? null)}
+                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillRiseNext24h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillRiseNext24h")}
@@ -241,9 +241,9 @@ function EventsPage() {
                                 <tr>
                                     <th>
                                         <div className="title">
-                                            <div>📉 Preis ist morgen niedriger</div>
+                                            <div>📉 Preis ist morgen niedriger (oder gleich)</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext24h") ?? null)}
+                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillFallNext24h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillFallNext24h")}
@@ -257,25 +257,9 @@ function EventsPage() {
                                 <tr>
                                     <th>
                                         <div className="title">
-                                            <div>⚖️ Preis ist morgen gleich</div>
-                                            <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext24h") ?? null)}
-                                            </div>
-                                            <div className="sub-title">
-                                                {formatLockHint("DieselWillStaySameNext24h")}
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <td>{renderBetCell("DieselWillStaySameNext24h")}</td>
-                                    <td>{renderBetCell("E10WillStaySameNext24h")}</td>
-                                    <td>{renderBetCell("E5WillStaySameNext24h")}</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        <div className="title">
                                             <div>↘️ Preis fällt nächste Stunde</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillFallNext2h") ?? null)}
+                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillFallNext2h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillFallNext2h")}
@@ -291,7 +275,7 @@ function EventsPage() {
                                         <div className="title">
                                             <div>➡️ Preis bleibt nächste Stunde gleich</div>
                                             <div className="sub-title">
-                                                {getTimeComparisonLabelNow(getEventByType("DieselWillStaySameNext2h") ?? null)}
+                                                {getTimeComparisonLabelRelative(getEventByType("DieselWillStaySameNext2h") ?? null)}
                                             </div>
                                             <div className="sub-title">
                                                 {formatLockHint("DieselWillStaySameNext2h")}
