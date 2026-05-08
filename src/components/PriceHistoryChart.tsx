@@ -5,7 +5,8 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer
+    ResponsiveContainer,
+    Legend
 } from "recharts";
 
 import { fetchJson } from "../api/fetchJson";
@@ -26,39 +27,6 @@ type ChartPoint = {
     e5Price: number | null;
     e10Price: number | null;
 };
-
-type EndLabelProps = {
-    x?: number | string;
-    y?: number | string;
-    index?: number;
-    value?: unknown;
-    label: string;
-    lastIndex: number;
-    yOffset?: number;
-};
-
-function EndLabel({ x, y, index, value, label, lastIndex, yOffset = 0 }: EndLabelProps) {
-    if (index !== lastIndex || value === null || value === undefined || x === undefined || y === undefined) {
-        return null;
-    }
-
-    const xPos = Number(x);
-    const yPos = Number(y);
-
-    if (Number.isNaN(xPos) || Number.isNaN(yPos)) {
-        return null;
-    }
-
-    return (
-        <text
-            x={xPos + 10}
-            y={yPos + 4 + yOffset}
-            fontSize={12}
-        >
-            {label}
-        </text>
-    );
-}
 
 function formatTick(value: number): string {
     const date = new Date(value);
@@ -112,8 +80,6 @@ function PriceHistoryChart() {
         return <p>Kein Preisverlauf gefunden.</p>;
     }
 
-    const lastIndex = data.length - 1;
-
     return (
         <div className="price-history-chart">
             <ResponsiveContainer width="100%" height="100%">
@@ -151,52 +117,33 @@ function PriceHistoryChart() {
                     />
 
                     <Line
-                        type="linear"
+                        type="stepAfter"
                         dataKey="dieselPrice"
                         name="Diesel"
+                        stroke="#f97316"
                         dot={false}
                         strokeWidth={3}
-                        label={(props) => (
-                            <EndLabel
-                                {...props}
-                                label="Diesel"
-                                lastIndex={lastIndex}
-                                yOffset={-12}
-                            />
-                        )}
                     />
 
                     <Line
-                        type="linear"
+                        type="stepAfter"
                         dataKey="e5Price"
                         name="E5"
+                        stroke="#16a34a"
                         dot={false}
                         strokeWidth={3}
-                        label={(props) => (
-                            <EndLabel
-                                {...props}
-                                label="E5"
-                                lastIndex={lastIndex}
-                                yOffset={0}
-                            />
-                        )}
                     />
 
                     <Line
-                        type="linear"
+                        type="stepAfter"
                         dataKey="e10Price"
                         name="E10"
+                        stroke="#2563eb"
                         dot={false}
                         strokeWidth={3}
-                        label={(props) => (
-                            <EndLabel
-                                {...props}
-                                label="E10"
-                                lastIndex={lastIndex}
-                                yOffset={12}
-                            />
-                        )}
                     />
+
+                    <Legend />
                 </LineChart>
             </ResponsiveContainer>
         </div>

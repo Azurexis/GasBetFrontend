@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { fetchJson } from "../api/fetchJson";
 import PriceHistoryChart from "../components/PriceHistoryChart";
+import LivePredictionTicker from "../components/LivePredictionTicker";
 import { eventMarketRows, fuelEventGroups } from "../config/eventCatalog";
 import type { FuelEventConfig } from "../config/eventCatalog";
 import { referenceStation } from "../config/referenceStation";
@@ -189,6 +190,8 @@ function EventsPage() {
                     </div>
 
                     <h2 className="section-title">Verfügbare Ereignisse</h2>
+
+                    <LivePredictionTicker />
 
                     <div className="desktop-view">
                         <table className="events-table">
